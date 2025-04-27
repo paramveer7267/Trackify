@@ -1,8 +1,8 @@
-
+import HomeScreen from "./pages/HomeScreen"
 function App() {
-  return(
+  return (
     <>
-
+      <HomeScreen />
     </>
   )
 }
