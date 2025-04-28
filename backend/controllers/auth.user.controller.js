@@ -28,6 +28,7 @@ export const userSignup = async (req, res) => {
         message: "Invalid email format",
       });
     }
+
     const passwordRegex =
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(password)) {
@@ -49,15 +50,29 @@ export const userSignup = async (req, res) => {
     // Hash the password before saving to the database
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user
-    const newUser = new User({
+    // Prepare the user data
+    const userData = {
       name,
       email: email.toLowerCase(),
       password: hashedPassword,
       role,
-    });
+    };
+
+    // If the user is an engineer, add assignedTickets field
+    if (role === "engineer") {
+      userData.assignedTickets = [];
+    }
+
+    // Create a new user
+    const newUser = new User(userData);
+
     // Generate token and set cookie
-    generateTokenAndSetCookie(newUser._id,newUser.role, res);
+    generateTokenAndSetCookie(
+      newUser._id,
+      newUser.role,
+      res
+    );
+
     // Save the user to the database
     await newUser.save();
 
@@ -119,7 +134,7 @@ export async function userLogin(req, res) {
     }
 
     // Generate token and set cookie
-    generateTokenAndSetCookie(user._id,user.role, res);
+    generateTokenAndSetCookie(user._id, user.role, res);
 
     res.status(200).json({
       success: true,

@@ -19,10 +19,17 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "enigeer"],
+      enum: ["user", "engineer"],
       default: "user",
     },
+    assignedTickets: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Ticket",
+      },
+    ], // <-- ADD THIS
   },
+
   { timestamps: true }
 );
 
