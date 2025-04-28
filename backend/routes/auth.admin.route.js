@@ -12,7 +12,6 @@ const router = express.Router();
 router.post("/signup", adminSignup);
 router.post("/login", adminLogin);
 router.post("/logout", adminLogout);
-// router.get('/dashboard', protectRoute, isAdmin, adminDashboard);
 
-router.get("/authCheck",protectRoute, authCheck);
+router.get("/authCheck",protectRoute,isAdmin, authCheck);
 export default router;
