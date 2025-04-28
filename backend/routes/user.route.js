@@ -24,7 +24,7 @@ router.get(
 
 // Update ticket status (admin & engineer only)
 router.patch(
-  "/:ticketId",
+  "/:ticketId/status",
   protectRoute,
   updateTicketStatus
 );
