@@ -23,7 +23,7 @@ const ticketSchema = new mongoose.Schema(
     },
     assignedTo: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // optional: assign to Admin/Support staff
+      ref: "Admin", // optional: assign to Admin/Support staff
       default: null
     },
     priority: {
