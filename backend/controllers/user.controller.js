@@ -70,9 +70,7 @@ export const getAssignedTickets = async (req, res) => {
     // Now fetch tickets using assignedTickets array
     const assignedTickets = await Ticket.find({
       _id: { $in: user.assignedTickets },
-    })
-      .populate("createdBy", "name email") // if you want to show creator details
-      .populate("assignedTo", "name email"); // if you want to show assigned engineer details
+    }).populate("createdBy", "name email"); // if you want to show creator details
 
     res.status(200).json({
       success: true,
@@ -90,9 +88,18 @@ export const getAssignedTickets = async (req, res) => {
 // Update the status of a ticket (Admin & engineer only)
 export const updateTicketStatus = async (req, res) => {
   try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
     const { ticketId } = req.params;
     const { status } = req.body;
 
+    if (user.role !== "engineer") {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Access denied. Only engineers can change status of assigned tickets.",
+      });
+    }
     // Validate the status
     const allowedStatuses = [
       "open",
