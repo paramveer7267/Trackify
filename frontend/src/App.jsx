@@ -1,10 +1,17 @@
-import HomeScreen from "./pages/HomeScreen"
+import { Route, Routes } from "react-router";
+import HomePage from "./pages/home/HomePage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
 function App() {
   return (
     <>
-      <HomeScreen />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+      </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
