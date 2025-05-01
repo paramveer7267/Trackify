@@ -1,7 +1,7 @@
 // src/components/LoginForm.js
 import React, { useState } from "react";
-
-export default function LoginForm() {
+import { Link } from "react-router-dom";
+export default function LoginPage() {
   const [activeTab, setActiveTab] = useState("user");
 
   return (
@@ -68,12 +68,13 @@ export default function LoginForm() {
 
           <p className="text-sm text-center mt-4">
             Don't have an account?{" "}
-            <a href="#" className="text-blue-600 hover:underline">
+            <Link to="/signup" className="text-blue-600 hover:underline">
               Sign Up
-            </a>
+            </Link>
           </p>
         </form>
       </div>
     </div>
   );
 }
+

@@ -1,19 +1,24 @@
-// src/components/RegisterForm.js
+// src/components/SignupPage.js
 import React from "react";
+import { Link } from "react-router";
 
-export default function RegisterForm() {
+export default function SignupPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-600 to-cyan-400">
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-2 text-center">Create an Account</h2>
+        <h2 className="text-2xl font-bold mb-2 text-center">
+          Create an Account
+        </h2>
         <p className="text-center text-gray-600 mb-6">
           Sign up to get started with our ticketing system
         </p>
 
-        <form className="space-y-4">
+        <form className="space-y-3  md:space-y-4">
           {/* Full Name */}
           <div>
-            <label className="block text-sm mb-1">Full Name</label>
+            <label className="block text-sm mb-1">
+              Full Name
+            </label>
             <input
               type="text"
               placeholder="John Doe"
@@ -23,7 +28,9 @@ export default function RegisterForm() {
 
           {/* Email */}
           <div>
-            <label className="block text-sm mb-1">Email Address</label>
+            <label className="block text-sm mb-1">
+              Email Address
+            </label>
             <input
               type="email"
               placeholder="you@example.com"
@@ -34,14 +41,18 @@ export default function RegisterForm() {
           {/* Password & Confirm Password */}
           <div className="flex gap-4">
             <div className="w-1/2">
-              <label className="block text-sm mb-1">Password</label>
+              <label className="block text-sm mb-1">
+                Password
+              </label>
               <input
                 type="password"
                 className="w-full border rounded px-3 py-2 text-gray-700 focus:outline-none focus:ring"
               />
             </div>
             <div className="w-1/2">
-              <label className="block text-sm mb-1">Confirm Password</label>
+              <label className="block text-sm mb-1">
+                Confirm Password
+              </label>
               <input
                 type="password"
                 className="w-full border rounded px-3 py-2 text-gray-700 focus:outline-none focus:ring"
@@ -51,7 +62,9 @@ export default function RegisterForm() {
 
           {/* Account Type */}
           <div>
-            <label className="block text-sm mb-1">Account Type</label>
+            <label className="block text-sm mb-1">
+              Account Type
+            </label>
             <select className="w-full border rounded px-3 py-2 text-gray-700 focus:outline-none focus:ring">
               <option>User</option>
               <option>Engineer</option>
@@ -89,9 +102,12 @@ export default function RegisterForm() {
 
           <p className="text-sm text-center mt-4">
             Already have an account?{" "}
-            <a href="#" className="text-blue-600 hover:underline">
+            <Link
+              to="/login"
+              className="text-blue-600 hover:underline"
+            >
               Sign In
-            </a>
+            </Link>
           </p>
         </form>
       </div>
