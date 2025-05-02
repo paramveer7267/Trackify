@@ -44,7 +44,7 @@ export const userSignup = async (req, res) => {
     if (existingUser) {
       return res
         .status(400)
-        .json({ msg: "Email is already registered" });
+        .json({ message: "Email already registered" });
     }
 
     // Hash the password before saving to the database
@@ -78,7 +78,7 @@ export const userSignup = async (req, res) => {
 
     // Send a success response
     res.status(201).json({
-      msg: "User registered successfully",
+      message: "User registered successfully",
       user: {
         name: newUser.name,
         email: newUser.email,
@@ -87,7 +87,7 @@ export const userSignup = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ msg: "Server error" });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -162,6 +162,21 @@ export async function userLogout(req, res) {
     });
   } catch (err) {
     console.log(err);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+}
+
+export async function authCheck(req, res) {
+  try {
+    res.status(200).json({
+      success: true,
+      user: req.user,
+    });
+  } catch (error) {
+    console.log("Error in authCheck:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error",
