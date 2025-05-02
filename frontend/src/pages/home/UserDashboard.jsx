@@ -13,9 +13,9 @@ const UserDashboard = () => {
   //   } catch (error) {}
   // }, []); // Empty dependency array to run only once on mount
   return (
-    <DashboardLayout pageTitle="Client Dashboard" >
-      {/* UserDashboard
-      <button onClick={userLogout}>Logout</button> */}
+    <DashboardLayout pageTitle="Client Dashboard">
+      UserDashboard
+      <button onClick={userLogout}>Logout</button>
     </DashboardLayout>
   );
 };

@@ -33,7 +33,7 @@ const Sidebar = ({ isMobile, toggleSidebar }) => {
         isMobile ? '-translate-x-full' : 'translate-x-0'
       }`}
     >
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full bg-purple-600">
         <div className="p-4 border-b border-primary-700">
           <div className="flex items-center justify-center">
             <TicketCheck className="h-8 w-8 text-white" />
