@@ -1,71 +1,130 @@
 // src/components/SignupPage.js
-import React from "react";
-import { Link } from "react-router";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 
 export default function SignupPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
+  const [showPassword, setShowPassword] = useState(false);  
+  const { userSignup } = useAuthStore();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    userSignup({
+      name,
+      email,
+      password,
+      role: role.toLowerCase(),
+    });
+    // You can add more fields here as needed
+    // Here you would typically send the data to your backend API for signup
+  };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-600 to-cyan-400">
+      <Link
+        to="/"
+        className="absolute top-4 left-4 text-white text-lg font-bold"
+      >
+        Home
+      </Link>
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-2 text-center">
           Create an Account
         </h2>
+
         <p className="text-center text-gray-600 mb-6">
           Sign up to get started with our ticketing system
         </p>
 
-        <form className="space-y-3  md:space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-3  md:space-y-4"
+        >
           {/* Full Name */}
           <div>
-            <label className="block text-sm mb-1">
+            <label
+              htmlFor="name"
+              className="block text-sm mb-1"
+            >
               Full Name
             </label>
             <input
+              id="name"
               type="text"
+              required
               placeholder="John Doe"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="w-full border rounded px-3 py-2 text-gray-700 focus:outline-none focus:ring"
             />
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-sm mb-1">
+            <label
+              htmlFor="email"
+              className="block text-sm mb-1"
+            >
               Email Address
             </label>
             <input
+              id="email"
               type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               className="w-full border rounded px-3 py-2 text-gray-700 focus:outline-none focus:ring"
             />
           </div>
 
-          {/* Password & Confirm Password */}
-          <div className="flex gap-4">
-            <div className="w-1/2">
-              <label className="block text-sm mb-1">
-                Password
-              </label>
+          {/* Password */}
+          <div>
+            <label className="block text-sm mb-1">
+              Password
+            </label>
+            <div className="relative">
               <input
-                type="password"
-                className="w-full border rounded px-3 py-2 text-gray-700 focus:outline-none focus:ring"
+                type={showPassword ? "text" : "password"}
+                id="password"
+                required
+                value={password}
+                onChange={(e) =>
+                  setPassword(e.target.value)
+                }
+                placeholder="********"
+                className="w-full border rounded px-3 py-2 text-gray-700 focus:outline-none focus:ring pr-10"
               />
-            </div>
-            <div className="w-1/2">
-              <label className="block text-sm mb-1">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                className="w-full border rounded px-3 py-2 text-gray-700 focus:outline-none focus:ring"
-              />
+              <button
+                type="button"
+                onClick={() =>
+                  setShowPassword((prev) => !prev)
+                }
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-600"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
             </div>
           </div>
 
           {/* Account Type */}
           <div>
             <label className="block text-sm mb-1">
-              Account Type
+              Role
             </label>
-            <select className="w-full border rounded px-3 py-2 text-gray-700 focus:outline-none focus:ring">
+            <select
+              id="role"
+              value={role}
+              required
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full border rounded px-3 py-2 text-gray-700 focus:outline-none focus:ring"
+            >
+              <option value="" disabled>
+                Select a role
+              </option>
               <option>User</option>
               <option>Engineer</option>
               {/* <option>Support</option> */}
