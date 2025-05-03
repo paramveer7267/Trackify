@@ -5,34 +5,40 @@ const ticketSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     description: {
       type: String,
-      required: true
+      required: true,
+    },
+    category: {
+      type: String,
+      required: true,
     },
     status: {
       type: String,
-      enum: ["open", "in_progress", "resolved", "closed"],
-      default: "open"
+      enum: ["new", "in_progress", "resolved", "assigned"],
+      default: "new",
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true
+      required: true,
     },
     assignedTo: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Admin", // optional: assign to Admin/Support staff
-      default: null
+      ref: "User", 
+      default: null,
     },
     priority: {
       type: String,
-      enum: ["low", "medium", "high"],
-      default: "medium"
-    }
+      required: true,
+    },
   },
   { timestamps: true }
 );
 
-export const Ticket = mongoose.model("Ticket", ticketSchema);
+export const Ticket = mongoose.model(
+  "Ticket",
+  ticketSchema
+);

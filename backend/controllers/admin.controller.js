@@ -1,6 +1,6 @@
 import { Ticket } from "../models/ticket.model.js";
 import User from "../models/user.model.js"; // optional, if you need user data for some operations
-
+import mongoose from "mongoose";
 // Get all tickets (Admin only)
 export const getAllTickets = async (req, res) => {
   try {
@@ -73,27 +73,25 @@ export const updateTicketStatus = async (req, res) => {
 
     // Validate the status
     const allowedStatuses = [
-      "open",
+      "new",
       "in_progress",
       "resolved",
-      "closed",
+      "assigned",
     ];
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
         message:
-          "Invalid status. Allowed statuses are: open, in_progress, resolved, closed.",
+          "Invalid status. Allowed statuses are: new, in_progress, resolved, assigned.",
       });
     }
 
     const ticket = await Ticket.findById(ticketId);
     if (!ticket) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: "Ticket not found",
-        });
+      return res.status(404).json({
+        success: false,
+        message: "Ticket not found",
+      });
     }
 
     // Update ticket status
@@ -116,8 +114,8 @@ export const updateTicketStatus = async (req, res) => {
 // assign the ticket to engineer
 export const assignTicketToEngineer = async (req, res) => {
   try {
-    const { ticketId } = req.body;
-    const { engineerId } = req.params;
+    const { ticketId, engineerId } = req.body;
+
     // Validate input
     if (!ticketId || !engineerId) {
       return res.status(400).json({
@@ -147,6 +145,7 @@ export const assignTicketToEngineer = async (req, res) => {
 
     // Assign the ticket
     ticket.assignedTo = engineerId;
+    ticket.status = "assigned"; // Set status to 'assigned' or use the provided status
     await ticket.save();
 
     // Optional: If you are storing assigned tickets in Engineer's document (assignedTickets array), you can push ticketId

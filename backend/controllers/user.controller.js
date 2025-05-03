@@ -4,13 +4,15 @@ import User from "../models/user.model.js"; // optional, if you need user data f
 // Create a new ticket
 export const createTicket = async (req, res) => {
   try {
-    const { title, description, priority } = req.body;
+    const { title, description, priority, category } =
+      req.body;
     const userId = req.user._id; // Assuming you have a user object set by the auth middleware
 
     const newTicket = new Ticket({
       title,
       description,
       priority,
+      category,
       createdBy: userId,
     });
 
@@ -102,16 +104,16 @@ export const updateTicketStatus = async (req, res) => {
     }
     // Validate the status
     const allowedStatuses = [
-      "open",
+      "new",
       "in_progress",
       "resolved",
-      "closed",
+      "assigned",
     ];
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
         message:
-          "Invalid status. Allowed statuses are: open, in_progress, resolved, closed.",
+          "Invalid status. Allowed statuses are: new, in_progress, resolved, assigned.",
       });
     }
 
@@ -130,6 +132,55 @@ export const updateTicketStatus = async (req, res) => {
       success: true,
       message: "Ticket status updated successfully",
       ticket,
+    });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error" });
+  }
+};
+
+// Get a ticket by ID (for user and admin)
+export const getTicketById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const ticket = await Ticket.findById(id).populate(
+      "createdBy",
+      "name email"
+    );
+    if (!ticket) {
+      return res.status(404).json({
+        success: false,
+        message: "Ticket not found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      ticket,
+    });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error" });
+  }
+};
+
+// Get user details
+export const getUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id).select("-password");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      user,
     });
   } catch (err) {
     console.error(err);

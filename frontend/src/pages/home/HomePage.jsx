@@ -1,19 +1,25 @@
-import React from "react";
-import UserDashboard from "./UserDashboard";
-import AdminDashboard from "./AdminDashboard";
-import AuthScreen from "./AuthScreen";
+import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 const HomePage = () => {
   const { user } = useAuthStore();
   return (
     <div>
-      {user?.role === "user" || user?.role === "engineer" ? (
-        <UserDashboard />
-      ) : user?.role === "admin" ? (
-        <AdminDashboard />
-      ) : (
-        <AuthScreen />
-      )}
+      <div>
+        AuthScreen
+        <Link
+          to="/login"
+          className="text-blue-500 hover:underline"
+        >
+          Login
+        </Link>
+        <Link
+          to="/signup"
+          className="text-blue-500 hover:underline"
+        >
+          Signup
+        </Link>
+      </div>
+      ;
     </div>
   );
 };
