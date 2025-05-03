@@ -8,6 +8,9 @@ import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import UserDashboard from "./pages/home/UserDashboard.jsx";
 import AdminDashboard from "./pages/home/AdminDashboard.jsx";
+import CreateTicket from "./pages/CreateTicket.jsx";
+import MyTickets from "./pages/MyTickets.jsx";
+import TicketDetails from "./pages/TicketDetails.jsx";
 function App() {
   const { user, isCheckingAuth, authCheck } =
     useAuthStore();
@@ -62,6 +65,36 @@ function App() {
           element={
             user?.role === "admin" ? (
               <AdminDashboard />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/dashboard/tickets/create"
+          element={
+            user ? (
+              <CreateTicket />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/dashboard/tickets"
+          element={
+            user ? (
+              <MyTickets />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/tickets/:id"
+          element={
+            user ? (
+              <TicketDetails />
             ) : (
               <Navigate to="/" />
             )

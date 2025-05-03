@@ -32,7 +32,7 @@ const Header = ({ toggleSidebar, pageTitle }) => {
             <span className="hidden md:block mr-3 text-sm font-medium text-gray-700">
               {currentUser?.name}
             </span>
-            <div className="h-8 w-8 rounded-full bg-primary-600 flex items-center justify-center text-white">
+            <div className="h-8 w-8 rounded-full bg-[#1E5DBE] flex items-center justify-center text-white">
               {currentUser?.name?.charAt(0).toUpperCase()}
             </div>
           </div>

@@ -1,49 +1,54 @@
-import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
+import React from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 import {
   LayoutDashboard,
   TicketCheck,
   Users,
-  Settings,
+  Ticket,
   LogOut,
   PlusCircle,
-} from 'lucide-react';
+} from "lucide-react";
 
-const Sidebar = ({ isMobile, toggleSidebar }) => {
-   const {user,userLogout} = useAuthStore();
-   const currentUser = user;
+const Sidebar = ({ isOpen, isMobile, toggleSidebar }) => {
+  const { user, userLogout } = useAuthStore();
+  const currentUser = user;
   const navigate = useNavigate();
 
   const handleLogout = () => {
     userLogout();
-    navigate('/login');
+    navigate("/login");
   };
 
   const navLinkClass = ({ isActive }) =>
     `flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${
       isActive
-        ? 'bg-primary-700 text-white'
-        : 'text-gray-200 hover:bg-primary-700/50'
+        ? "bg-[#1E5DBE] text-white"
+        : "text-gray-200 hover:bg-[#1E5DBE]/50"
     }`;
 
   return (
     <div
-      className={`fixed inset-y-0 left-0 z-20 w-64 bg-primary-800 text-white transform transition-transform duration-300 ease-in-out ${
-        isMobile ? '-translate-x-full' : 'translate-x-0'
-      }`}
+      className={`fixed inset-y-0 left-0 z-20 w-64 text-white transform transition-transform duration-300 ease-in-out
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        ${!isMobile && "md:translate-x-0"}
+        bg-[#3E74C7]
+      `}
     >
-      <div className="flex flex-col h-full bg-purple-600">
-        <div className="p-4 border-b border-primary-700">
+      <div className="flex flex-col h-full">
+        <div className="p-4 border-b border-[#0F52BA]">
           <div className="flex items-center justify-center">
-            <TicketCheck className="h-8 w-8 text-white" />
-            <span className="ml-2 text-xl font-bold">TicketPro CRM</span>
+            <TicketCheck className="h-8 w-6 text-white" />
+            <span className="ml-2 text-xl font-bold">
+              IssueResolver
+            </span>
           </div>
         </div>
 
         <div className="px-3 py-4 flex-1 overflow-y-auto">
           <nav className="space-y-1">
             <NavLink
+              end
               to="/dashboard"
               className={navLinkClass}
               onClick={() => isMobile && toggleSidebar()}
@@ -52,7 +57,7 @@ const Sidebar = ({ isMobile, toggleSidebar }) => {
               Dashboard
             </NavLink>
 
-            {currentUser?.role === 'admin' && (
+            {currentUser?.role === "admin" && (
               <NavLink
                 to="/users"
                 className={navLinkClass}
@@ -63,32 +68,39 @@ const Sidebar = ({ isMobile, toggleSidebar }) => {
               </NavLink>
             )}
 
-            {currentUser?.role === 'client' && (
-              <NavLink
-                to="/tickets/new"
-                className={navLinkClass}
-                onClick={() => isMobile && toggleSidebar()}
-              >
-                <PlusCircle className="mr-3 h-5 w-5" />
-                Create Ticket
-              </NavLink>
+            {currentUser?.role === "user" && (
+              <>
+                <NavLink
+                  to="/dashboard/tickets/create"
+                  end
+                  className={navLinkClass}
+                  onClick={() =>
+                    isMobile && toggleSidebar()
+                  }
+                >
+                  <PlusCircle className="mr-3 h-5 w-5" />
+                  Create Ticket
+                </NavLink>
+                <NavLink
+                  to="/dashboard/tickets"
+                  end
+                  className={navLinkClass}
+                  onClick={() =>
+                    isMobile && toggleSidebar()
+                  }
+                >
+                  <Ticket className="mr-3 h-5 w-5" />
+                  My Tickets
+                </NavLink>
+              </>
             )}
-
-            <NavLink
-              to="/settings"
-              className={navLinkClass}
-              onClick={() => isMobile && toggleSidebar()}
-            >
-              <Settings className="mr-3 h-5 w-5" />
-              Settings
-            </NavLink>
           </nav>
         </div>
 
-        <div className="p-4 border-t border-primary-700">
+        <div className="p-4 border-t border-[#0F52BA]">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <div className="h-8 w-8 rounded-full bg-primary-600 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-full bg-[#1E5DBE] flex items-center justify-center">
                 {currentUser?.name?.charAt(0).toUpperCase()}
               </div>
             </div>
@@ -96,7 +108,7 @@ const Sidebar = ({ isMobile, toggleSidebar }) => {
               <p className="text-sm font-medium text-white">
                 {currentUser?.name}
               </p>
-              <p className="text-xs text-gray-300 capitalize">
+              <p className="text-sm font-semibold text-gray-300 capitalize">
                 {currentUser?.role}
               </p>
             </div>
@@ -104,9 +116,9 @@ const Sidebar = ({ isMobile, toggleSidebar }) => {
 
           <button
             onClick={handleLogout}
-            className="mt-3 w-full flex items-center justify-center px-4 py-2 text-sm text-white bg-primary-700 rounded-md hover:bg-primary-600 transition-colors"
+            className="mt-3 w-full font-semibold flex items-center justify-center px-4 py-2 text-sm text-white bg-[#1E5DBE] rounded-md hover:bg-[#1E5DBE]/90 transition-colors"
           >
-            <LogOut className="mr-2 h-4 w-4" />
+            <LogOut className="mr-2 h-4 w-4 " />
             Sign Out
           </button>
         </div>
