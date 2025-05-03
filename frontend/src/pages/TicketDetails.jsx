@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { use, useEffect } from "react";
 import DashboardLayout from "../components/DashboardLayout";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
@@ -16,9 +16,12 @@ import {
   User,
   MessageSquare,
 } from "lucide-react";
+import { useAuthStore } from "../store/authStore";
 const TicketDetails = () => {
+  const { user } = useAuthStore();
   const { id } = useParams(); // 🔑 Get ticket ID from URL
   const [ticket, setTicket] = React.useState(null);
+  const [engineer, setEngineer] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
   const navigate = useNavigate();
 
@@ -38,13 +41,30 @@ const TicketDetails = () => {
 
     fetchTicket();
   }, [id]);
+
+  useEffect(() => {
+    const fetchEngineer = async () => {
+      try {
+        const response = await axios.get(
+          `/api/v1/dashboard/user/${ticket?.assignedTo}`
+        ); // backend endpoint
+        setEngineer(response.data.user.name);
+      } catch (error) {
+        console.error("Error fetching ticket:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEngineer();
+  }, [ticket?.assignedTo]);
   // Status badge component
   const StatusBadge = ({ status }) => {
     let badgeClass = "";
     let icon = null;
 
     switch (status) {
-      case "open":
+      case "new":
         badgeClass = "bg-blue-100 text-blue-800";
         icon = <Clock className="w-4 h-4 mr-1" />;
         break;
@@ -61,7 +81,7 @@ const TicketDetails = () => {
         icon = <CheckCircle className="w-4 h-4 mr-1" />;
         break;
       default:
-        badgeClass = "bg-gray-100 text-gray-800";
+        badgeClass = "text-gray-500";
     }
 
     return (
@@ -84,20 +104,19 @@ const TicketDetails = () => {
 
     switch (priority) {
       case "low":
-        badgeClass = "bg-success-100 text-success-800";
+        badgeClass = "bg-pink-500/80 text-white";
         break;
       case "medium":
-        badgeClass = "bg-warning-100 text-warning-800";
+        badgeClass = "bg-yellow-500/80 text-white";
         break;
       case "high":
-        badgeClass = "bg-error-100 text-error-800";
+        badgeClass = "bg-orange-500/80 text-white";
         break;
       case "critical":
-        badgeClass =
-          "bg-error-100 text-error-800 animate-pulse";
+        badgeClass = "bg-red-500/80 text-white animate-pulse";
         break;
       default:
-        badgeClass = "bg-gray-100 text-gray-800";
+        badgeClass = "bg-green-500/80 text-white";
     }
 
     return (
@@ -105,8 +124,8 @@ const TicketDetails = () => {
         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${badgeClass}`}
       >
         <Flag className="w-4 h-4 mr-1" />
-        {ticket?.priority?.charAt(0).toUpperCase() +
-          ticket?.priority?.slice(1)}
+        {priority?.charAt(0).toUpperCase() +
+          priority?.slice(1)}
       </span>
     );
   };
@@ -127,7 +146,13 @@ const TicketDetails = () => {
     <DashboardLayout pageTitle={"Ticket Details"}>
       <div className=" bg-gray-50 min-h-screen ">
         <button
-          onClick={() => navigate("/dashboard/tickets")}
+          onClick={() =>
+            navigate(
+              user?.role === "engineer"
+                ? "/dashboard/assigned-tickets"
+                : "/dashboard/tickets"
+            )
+          }
           className="inline-flex mb-4 items-center text-lg   text-gray-500 hover:text-gray-700"
         >
           <ArrowLeft className="w-4 h-4 mr-1" />
@@ -148,9 +173,15 @@ const TicketDetails = () => {
                       <StatusBadge
                         status={ticket?.status}
                       />
-                      <PriorityBadge
-                        priority={ticket?.priority}
-                      />
+                      {ticket?.status === "resolved" ? (
+                        <PriorityBadge
+                          priority={"Neutral"}
+                        />
+                      ) : (
+                        <PriorityBadge
+                          priority={ticket?.priority.toLowerCase()}
+                        />
+                      )}
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
                         <Tag className="w-4 h-4 mr-1" />
                         {ticket?.category}
@@ -209,7 +240,7 @@ const TicketDetails = () => {
                     <span>
                       Created:{" "}
                       <span className="font-semibold text-gray-500">
-                      {formatDate(ticket?.createdAt)}
+                        {formatDate(ticket?.createdAt)}
                       </span>
                     </span>
                   </div>
@@ -230,7 +261,7 @@ const TicketDetails = () => {
                   className="flex-grow border rounded-lg p-2 text-sm"
                   placeholder="Add a comment or update..."
                 ></textarea>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700">
+                <button className="bg-[#5585CE] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#5585CE]/90">
                   Add Comment
                 </button>
               </div>
@@ -260,7 +291,9 @@ const TicketDetails = () => {
                       Status:
                     </span>
                     <span className="w-2/3">
-                      <StatusBadge status={ticket?.status} />
+                      <StatusBadge
+                        status={ticket?.status}
+                      />
                     </span>
                   </li>
                   <li className="flex items-start">
@@ -268,9 +301,15 @@ const TicketDetails = () => {
                       Priority:
                     </span>
                     <span className="w-2/3">
-                      <PriorityBadge
-                        priority={ticket?.priority}
-                      />
+                      {ticket?.status === "resolved" ? (
+                        <PriorityBadge
+                          priority={"Neutral"}
+                        />
+                      ) : (
+                        <PriorityBadge
+                          priority={ticket?.priority.toLowerCase()}
+                        />
+                      )}
                     </span>
                   </li>
                   <li className="flex items-start">
@@ -322,8 +361,7 @@ const TicketDetails = () => {
                       Assigned to:
                     </span>
                     <span className="w-2/3 text-sm font-semibold text-gray-600">
-                      {ticket?.assignedTo?.name  ||
-                        "Unassigned"}
+                      {engineer || "Unassigned"}
                     </span>
                   </li>
                 </ul>

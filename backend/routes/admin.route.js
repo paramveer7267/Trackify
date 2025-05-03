@@ -36,7 +36,7 @@ router.patch(
 
 
 router.patch(
-  "/assign-ticket/:engineerId",
+  "/assign-ticket",
   protectRoute,
   isAdmin,
   assignTicketToEngineer

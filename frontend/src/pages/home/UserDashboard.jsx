@@ -6,16 +6,10 @@ import { Link } from "react-router-dom";
 const UserDashboard = () => {
   const { userLogout, user } = useAuthStore();
 
-  // useEffect(async () => {
-  //   try {
-  //     const res = await axios.get(
-  //       "http://localhost:5000/api/user/dashboard"
-  //     );
-  //   } catch (error) {}
-  // }, []); // Empty dependency array to run only once on mount
   return (
     <DashboardLayout
-      pageTitle={`${user?.role} Dashboard`}
+      pageTitle={`${user?.role?.charAt(0).toUpperCase() +
+        user?.role?.slice(1)} Dashboard`}
     >
       <div>
         <Link to={"/dashboard/tickets/create"}>

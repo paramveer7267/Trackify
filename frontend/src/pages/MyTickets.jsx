@@ -2,14 +2,93 @@ import React, { useEffect } from "react";
 import DashboardLayout from "../components/DashboardLayout";
 import { useTicketStore } from "../store/ticketStore";
 import { Link } from "react-router-dom";
-import { Timer,FlagIcon } from "lucide-react";
+import {
+  Clock,
+  CheckCircle,
+  Activity,
+  AlertCircle,
+  Send,
+  ArrowLeft,
+  Calendar,
+  Tag,
+  Flag,
+  User,
+  MessageSquare,
+  Timer,
+} from "lucide-react";
 const MyTickets = () => {
   const { fetchUserTickets, tickets } = useTicketStore();
 
   useEffect(() => {
     fetchUserTickets();
   }, []);
+  // Status badge component
+  const StatusBadge = ({ status }) => {
+    let badgeClass = "";
+    let icon = null;
 
+    switch (status) {
+      case "new":
+        badgeClass = "bg-blue-100 text-blue-800";
+        icon = <Clock className="w-4 h-4 mr-1" />;
+        break;
+      case "assigned":
+        badgeClass = "bg-purple-100 text-purple-800";
+        icon = <User className="w-4 h-4 mr-1" />;
+        break;
+      case "in_progress":
+        badgeClass = "bg-yellow-100 text-yellow-800";
+        icon = <Activity className="w-4 h-4 mr-1" />;
+        break;
+      case "resolved":
+        badgeClass = "bg-green-100 text-green-800";
+        icon = <CheckCircle className="w-4 h-4 mr-1" />;
+        break;
+      default:
+        badgeClass = "bg-gray-100 text-gray-800";
+    }
+
+    return (
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${badgeClass}`}
+      >
+        {icon}
+        {status?.replace("_", " ").charAt(0).toUpperCase() +
+          status?.replace("_", " ").slice(1)}
+      </span>
+    );
+  };
+  // Priority badge component
+  const PriorityBadge = ({ priority }) => {
+    let badgeClass = "";
+
+    switch (priority) {
+      case "low":
+        badgeClass = "bg-pink-500/80 text-white";
+        break;
+      case "medium":
+        badgeClass = "bg-yellow-500/80 text-white";
+        break;
+      case "high":
+        badgeClass = "bg-orange-500/80 text-white";
+        break;
+      case "critical":
+        badgeClass = "bg-red-500/80 text-white animate-pulse";
+        break;
+      default:
+        badgeClass = "bg-green-500/80 text-white";
+    }
+
+    return (
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${badgeClass}`}
+      >
+        <Flag className="w-4 h-4 mr-1" />
+        {priority?.charAt(0).toUpperCase() +
+          priority?.slice(1)}
+      </span>
+    );
+  };
   return (
     <DashboardLayout pageTitle={"My Tickets"}>
       <div className="p-2">
@@ -37,10 +116,10 @@ const MyTickets = () => {
                   Category
                 </th>
                 <th className="px-4 py-4 text-xs uppercase tracking-wider font-sans">
-                  Created Date
+                  Priority
                 </th>
                 <th className="px-4 py-4 text-xs uppercase tracking-wider font-sans">
-                  Priority
+                  Created 
                 </th>
               </tr>
             </thead>
@@ -61,19 +140,30 @@ const MyTickets = () => {
                   className="border-t border-gray-300 hover:bg-gray-50"
                 >
                   <td className="px-4 py-5">
-                    <Link to={`/tickets/${ticket._id}`} className=" text-[#0F52BA]/70 hover:text-[#0F52BA]/90 font-semibold text-md">
+                    <Link
+                      to={`/tickets/${ticket._id}`}
+                      className=" text-[#0F52BA]/70 hover:text-[#0F52BA]/90 font-semibold text-md"
+                    >
                       {ticket?.title}
                     </Link>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="inline-flex items-center text-md bg-blue-100 text-[#1E40B4] font-semibold px-2 py-1 rounded-full">
-                      <Timer className="size-4 pr-1" /> {ticket?.status?.charAt(0).toUpperCase() +
-          ticket?.status?.slice(1)}
-                    </span>
+                    <StatusBadge status={ticket?.status} />
                   </td>
                   <td className="px-4 py-3 text-gray-500 font-semibold">
                     {ticket.category}
                   </td>
+                  {ticket?.status === "resolved" ? (
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <PriorityBadge priority={"Neutral"} />
+                    </td>
+                  ) : (
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <PriorityBadge
+                        priority={ticket?.priority.toLowerCase()}
+                      />
+                    </td>
+                  )}
                   <td className="px-4 py-3 text-gray-500 font-semibold">
                     {new Date(
                       ticket.createdAt
@@ -82,11 +172,6 @@ const MyTickets = () => {
                       month: "short",
                       day: "numeric",
                     })}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="inline-flex items-center bg-yellow-100 text-yellow-600 text-md px-2 py-1 rounded-full font-semibold">
-                      <FlagIcon className="size-4 pr-1"/>{ticket.priority}
-                    </span>
                   </td>
                 </tr>
               ))}

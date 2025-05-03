@@ -7,11 +7,21 @@ import { useNavigate } from "react-router-dom"; // ✅ Add this at the top
 const CreateTicket = () => {
   const { createTicket } = useTicketStore();
   const navigate = useNavigate(); // ✅ Initialize navigate
-
+  const CATEGORIES = [
+    "Hardware Issue",
+    "Software Issue",
+    "Network Problem",
+    "Account Access",
+    "Data Recovery",
+    "Security Concern",
+    "Performance Issue",
+    "Feature Request",
+    "Other",
+  ];
   const [formData, setFormData] = useState({
     title: "",
     category: "",
-    priority: "Medium - Affects work but has workaround",
+    priority: "Low",
     description: "",
   });
 
@@ -31,7 +41,7 @@ const CreateTicket = () => {
     setFormData({
       title: "",
       category: "",
-      priority: "Medium",
+      priority: "",
       description: "",
     });
   };
@@ -78,13 +88,14 @@ const CreateTicket = () => {
                 required
                 className="w-full border font-semibold text-gray-600 border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="" disabled>Select a category</option>
-                <option value="Bug">Bug</option>
-                <option value="Feature Request">
-                  Feature Request
+                <option value="" disabled>
+                  Select a category
                 </option>
-                <option value="Account">Account</option>
-                <option value="Other">Other</option>
+                {CATEGORIES.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
               </select>
             </div>
 

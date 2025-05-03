@@ -11,6 +11,8 @@ import AdminDashboard from "./pages/home/AdminDashboard.jsx";
 import CreateTicket from "./pages/CreateTicket.jsx";
 import MyTickets from "./pages/MyTickets.jsx";
 import TicketDetails from "./pages/TicketDetails.jsx";
+import AssignedTickets from "./pages/AssignedTickets.jsx";
+import './App.css';
 function App() {
   const { user, isCheckingAuth, authCheck } =
     useAuthStore();
@@ -95,6 +97,16 @@ function App() {
           element={
             user ? (
               <TicketDetails />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/dashboard/assigned-tickets"
+          element={
+            user ? (
+              <AssignedTickets />
             ) : (
               <Navigate to="/" />
             )

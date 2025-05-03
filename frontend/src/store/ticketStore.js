@@ -3,9 +3,14 @@ import axios from "axios";
 import toast from "react-hot-toast";
 export const useTicketStore = create((set) => ({
   tickets: [],
+  assignedTickets: [],
   isLoading: false,
+  isCreating: false,
+  isUpdating: false,
+  isDeleting: false,
+  isFetching: false,
   createTicket: async (ticketData) => {
-    set({ isLoading: true });
+    set({ isCreating: true });
     try {
       const res = await axios.post(
         "/api/v1/dashboard/create",
@@ -13,7 +18,7 @@ export const useTicketStore = create((set) => ({
       );
       set((state) => ({
         tickets: [...state.tickets, res.data.ticket],
-        isLoading: false,
+        isCreating: false,
       }));
       toast.success("Ticket created successfully");
       return res.data.ticket;
@@ -23,14 +28,33 @@ export const useTicketStore = create((set) => ({
         error.response?.data?.message ||
           "Ticket creation failed"
       );
-      set({ isLoading: false });
+      set({ isCreating: false });
     }
   },
   fetchUserTickets: async () => {
-    set({ isLoading: true });
+    set({ isFetching: true });
     try {
       const res = await axios.get("/api/v1/dashboard/user");
-      set({ tickets: res.data.tickets, isLoading: false });
+      set({ tickets: res.data.tickets, isFetching: false });
+    } catch (error) {
+      console.error("Fetch Tickets Error:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to fetch tickets"
+      );
+      set({ isFetching: false });
+    }
+  },
+  fetchAssignedTickets: async () => {
+    set({ isLoading: true });
+    try {
+      const res = await axios.get(
+        "/api/v1/dashboard/assigned-tickets"
+      );
+      set({
+        assignedTickets: res.data.tickets,
+        isLoading: false,
+      });
     } catch (error) {
       console.error("Fetch Tickets Error:", error);
       toast.error(
@@ -40,27 +64,20 @@ export const useTicketStore = create((set) => ({
       set({ isLoading: false });
     }
   },
-  updateTicket: async (ticketId, updatedData) => {
-    set({ isLoading: true });
+  updateTicket: async (id, updates) => {
+    set({ isUpdating: true });
     try {
-      const res = await axios.put(
-        `/api/v1/tickets/${ticketId}`,
-        updatedData
-      );
+      const res = await axios.patch(`/api/v1/dashboard/${id}/status`, updates);
+      const updated = res.data;
+  
       set((state) => ({
-        tickets: state.tickets.map((ticket) =>
-          ticket._id === ticketId ? res.data.ticket : ticket
-        ),
-        isLoading: false,
+        assignedTickets: state.assignedTickets.map((ticket) =>
+          ticket._id === id ? { ...ticket, ...updated } : ticket
+        ),isUpdating: false,
       }));
-      toast.success("Ticket updated successfully");
-    } catch (error) {
-      console.error("Update Ticket Error:", error);
-      toast.error(
-        error.response?.data?.message ||
-          "Ticket update failed"
-      );
-      set({ isLoading: false });
+
+    } catch (err) {
+      console.error("Failed to update ticket:", err);
     }
   },
   deleteTicket: async (ticketId) => {

@@ -8,6 +8,7 @@ import {
   Ticket,
   LogOut,
   PlusCircle,
+  TicketIcon
 } from "lucide-react";
 
 const Sidebar = ({ isOpen, isMobile, toggleSidebar }) => {
@@ -65,6 +66,16 @@ const Sidebar = ({ isOpen, isMobile, toggleSidebar }) => {
               >
                 <Users className="mr-3 h-5 w-5" />
                 Users & Engineers
+              </NavLink>
+            )}
+            {currentUser?.role === "engineer" && (
+              <NavLink
+                to="/dashboard/assigned-tickets"
+                className={navLinkClass}
+                onClick={() => isMobile && toggleSidebar()}
+              >
+                <TicketIcon className="mr-3 h-5 w-5" />
+                Assigned Tickets
               </NavLink>
             )}
 
