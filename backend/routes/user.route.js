@@ -6,6 +6,7 @@ import {
   getTicketById,
   updateTicketStatus,
   getUser,
+  addComment,
 } from "../controllers/user.controller.js";
 import { protectRoute } from "../middleware/protectRoute.js";
 
@@ -13,6 +14,11 @@ const router = express.Router();
 
 // Create a ticket (any user)
 router.post("/create", protectRoute, createTicket);
+router.post(
+  "/tickets/:ticketId/comments",
+  protectRoute,
+  addComment
+);
 
 // Get tickets for the logged-in user
 router.get("/user", protectRoute, getUserTickets);
@@ -34,5 +40,3 @@ router.patch(
   updateTicketStatus
 );
 export default router;
-
-

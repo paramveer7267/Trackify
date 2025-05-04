@@ -1,5 +1,19 @@
 import mongoose from "mongoose";
 
+const commentSchema = new mongoose.Schema({
+  text: {
+    type: String,
+    required: true,
+  },
+  commentedBy: {
+    type: String,
+    required: true,
+  },
+  commentedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 const ticketSchema = new mongoose.Schema(
   {
     title: {
@@ -27,13 +41,14 @@ const ticketSchema = new mongoose.Schema(
     },
     assignedTo: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", 
+      ref: "User",
       default: null,
     },
     priority: {
       type: String,
       required: true,
     },
+    comments: [commentSchema],
   },
   { timestamps: true }
 );

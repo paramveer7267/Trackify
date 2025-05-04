@@ -171,7 +171,9 @@ export const getTicketById = async (req, res) => {
 export const getUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id).select("-password");
+    const user = await User.findById(id).select(
+      "-password"
+    );
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -187,5 +189,45 @@ export const getUser = async (req, res) => {
     res
       .status(500)
       .json({ success: false, message: "Server error" });
+  }
+};
+
+export const addComment = async (req, res) => {
+  const { ticketId } = req.params;
+  const { text } = req.body;
+  const name = req.user.name; // assuming you're using auth middleware to attach user
+
+  if (!text) {
+    return res
+      .status(400)
+      .json({ message: "Comment text is required." });
+  }
+
+  try {
+    const ticket = await Ticket.findById(ticketId);
+    if (!ticket) {
+      return res
+        .status(404)
+        .json({ message: "Ticket not found." });
+    }
+
+    const comment = {
+      text,
+      commentedBy: name,
+      commentedAt: new Date(),
+    };
+
+    ticket.comments.push(comment);
+    await ticket.save();
+
+    return res.status(200).json({
+      message: "Comment added successfully.",
+      comment,
+    });
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error." });
   }
 };
