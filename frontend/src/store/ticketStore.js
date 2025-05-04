@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import toast from "react-hot-toast";
+
 export const useTicketStore = create((set) => ({
   tickets: [],
   assignedTickets: [],
@@ -9,6 +10,47 @@ export const useTicketStore = create((set) => ({
   isUpdating: false,
   isDeleting: false,
   isFetching: false,
+  addComment: async (ticketId, commentData) => {
+    set({ isLoading: true });
+    try {
+      const res = await axios.post(
+        `/api/v1/dashboard/tickets/${ticketId}/comments`,
+        commentData
+      );
+
+      set((state) => ({
+        tickets: state.tickets.map((ticket) =>
+          ticket._id === ticketId
+            ? {
+                ...ticket,
+                comments: [
+                  ...(ticket.comments || []),
+                  res.data.comment,
+                ],
+              }
+            : ticket
+        ),
+        assignedTickets: state.assignedTickets.map(
+          (ticket) =>
+            ticket._id === ticketId
+              ? {
+                  ...ticket,
+                  comments: [
+                    ...(ticket.comments || []),
+                    res.data.comment,
+                  ],
+                }
+              : ticket
+        ),
+        isLoading: false,
+      }));
+      toast.success("Comment added successfully");
+    } catch (error) {
+      console.error("Failed to add comment:", error);
+      set({ isLoading: false });
+    }
+  },
+
   createTicket: async (ticketData) => {
     set({ isCreating: true });
     try {
@@ -67,15 +109,21 @@ export const useTicketStore = create((set) => ({
   updateTicket: async (id, updates) => {
     set({ isUpdating: true });
     try {
-      const res = await axios.patch(`/api/v1/dashboard/${id}/status`, updates);
+      const res = await axios.patch(
+        `/api/v1/dashboard/${id}/status`,
+        updates
+      );
       const updated = res.data;
-  
-      set((state) => ({
-        assignedTickets: state.assignedTickets.map((ticket) =>
-          ticket._id === id ? { ...ticket, ...updated } : ticket
-        ),isUpdating: false,
-      }));
 
+      set((state) => ({
+        assignedTickets: state.assignedTickets.map(
+          (ticket) =>
+            ticket._id === id
+              ? { ...ticket, ...updated }
+              : ticket
+        ),
+        isUpdating: false,
+      }));
     } catch (err) {
       console.error("Failed to update ticket:", err);
     }

@@ -16,13 +16,17 @@ import {
   User,
   MessageSquare,
 } from "lucide-react";
+import { useTicketStore } from "../store/ticketStore";
 import { useAuthStore } from "../store/authStore";
 const TicketDetails = () => {
   const { user } = useAuthStore();
+  const { addComment } = useTicketStore();
+  const [commentText, setCommentText] = React.useState("");
   const { id } = useParams(); // 🔑 Get ticket ID from URL
   const [ticket, setTicket] = React.useState(null);
   const [engineer, setEngineer] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
+  const [comments, setComments] = React.useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,6 +36,7 @@ const TicketDetails = () => {
           `/api/v1/dashboard/tickets/${id}`
         ); // backend endpoint
         setTicket(response.data.ticket);
+        setComments(response.data.ticket.comments || []);
       } catch (error) {
         console.error("Error fetching ticket:", error);
       } finally {
@@ -113,7 +118,8 @@ const TicketDetails = () => {
         badgeClass = "bg-orange-500/80 text-white";
         break;
       case "critical":
-        badgeClass = "bg-red-500/80 text-white animate-pulse";
+        badgeClass =
+          "bg-red-500/80 text-white animate-pulse";
         break;
       default:
         badgeClass = "bg-green-500/80 text-white";
@@ -142,6 +148,28 @@ const TicketDetails = () => {
       hour12: true,
     });
   };
+  const handleComment = async (e) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+
+    try {
+      const newComment = {
+        text: commentText,
+        commentedBy: user?.name,
+      };
+      await addComment(ticket._id, newComment);
+
+      // Fetch updated ticket with comments
+      const updatedTicket = await axios.get(
+        `/api/v1/dashboard/tickets/${ticket._id}`
+      );
+      setComments(updatedTicket.data.ticket.comments || []);
+      setCommentText("");
+    } catch (error) {
+      console.error("Failed to add comment", error);
+    }
+  };
+  console.log(ticket?.comments);
   return (
     <DashboardLayout pageTitle={"Ticket Details"}>
       <div className=" bg-gray-50 min-h-screen ">
@@ -252,16 +280,60 @@ const TicketDetails = () => {
               <h3 className="text-lg font-semibold mb-4">
                 Comments & Updates
               </h3>
-              <p className="text-gray-500 mb-4">
-                No comments yet. Be the first to add a
-                comment.
-              </p>
+              <div className="space-y-4 mb-4 max-h-60 overflow-y-auto pr-2">
+                {comments.length === 0 && (
+                  <div className="text-gray-500 text-sm">
+                    No comments yet. Be the first to
+                    comment!
+                  </div>
+                )}
+                {comments.map((comment, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-3 p-3 bg-gray-100 rounded-md shadow-sm"
+                  >
+                    {/* Avatar */}
+                    <div className="flex-shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-semibold">
+                        {comment.commentedBy
+                          ?.charAt(0)
+                          .toUpperCase() || "U"}
+                      </div>
+                    </div>
+
+                    {/* Comment Content */}
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-gray-800">
+                          {comment.commentedBy}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {formatDate(
+                            comment?.commentedAt || new Date()
+                          )}
+                        </span>
+                      </div>
+                      <p className="text-sm mt-1 text-gray-700 whitespace-pre-wrap">
+                        {comment.text}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
               <div className="flex items-start gap-2">
                 <textarea
                   className="flex-grow border rounded-lg p-2 text-sm"
                   placeholder="Add a comment or update..."
+                  value={commentText}
+                  onChange={(e) =>
+                    setCommentText(e.target.value)
+                  }
                 ></textarea>
-                <button className="bg-[#5585CE] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#5585CE]/90">
+
+                <button
+                  onClick={handleComment}
+                  className="bg-[#5585CE] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#5585CE]/90"
+                >
                   Add Comment
                 </button>
               </div>
