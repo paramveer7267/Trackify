@@ -1,10 +1,12 @@
-import React from 'react'
+
+import DashboardLayout from '../../components/DashboardLayout'
+import TicketDashboard from '../../components/TicketDashboard'
 
 const AdminDashboard = () => {
   return (
-    <div>
-      AdminDashBoard
-    </div>
+    <DashboardLayout pageTitle={"Admin Dashboard"}>
+      <TicketDashboard/>
+    </DashboardLayout>
   )
 }
 

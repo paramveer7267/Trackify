@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import DashboardLayout from "../components/DashboardLayout";
@@ -13,6 +14,7 @@ import {
   Calendar,
   Tag,
   Flag,
+  OctagonX,
   User,
   MessageSquare,
 } from "lucide-react";
@@ -20,6 +22,8 @@ import { useAuthStore } from "../store/authStore";
 import { useTicketStore } from "../store/ticketStore";
 
 const AssignedTickets = () => {
+  const [updating, setUpdating] = useState({ id: null, action: null });
+
   const {
     fetchAssignedTickets,
     assignedTickets,
@@ -44,13 +48,16 @@ const AssignedTickets = () => {
   // Update ticket status handler
   const handleUpdateStatus = async (id, status) => {
     setUpdatingTicketId(id);
+    setUpdating({ id, action: status });
     await updateTicket(id, { status });
     await fetchAssignedTickets();
+    setUpdating({ id: null, action: null });
     setUpdatingTicketId(null);
   };
 
   // Status badge component
   const StatusBadge = ({ status }) => {
+    if (!status) return null; // or a default UI
     let badgeClass = "";
     let icon = null;
 
@@ -71,6 +78,10 @@ const AssignedTickets = () => {
         badgeClass = "bg-green-100 text-green-800";
         icon = <CheckCircle className="w-3 h-3 mr-1" />;
         break;
+      case "not_resolved":
+        badgeClass = "bg-amber-100 text-amber-800";
+        icon = <OctagonX className="w-3 h-3 mr-1" />;
+        break;
       default:
         badgeClass = "bg-gray-100 text-gray-800";
     }
@@ -80,8 +91,8 @@ const AssignedTickets = () => {
         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${badgeClass}`}
       >
         {icon}
-        {status.replace("_", " ").charAt(0).toUpperCase() +
-          status.replace("_", " ").slice(1)}
+        {status?.replace("_", " ").charAt(0).toUpperCase() +
+          status?.replace("_", " ").slice(1)}
       </span>
     );
   };
@@ -118,14 +129,27 @@ const AssignedTickets = () => {
     );
   };
   // Group tickets by status
-  const newAssignedTickets = assignedTickets.filter(
-    (t) => t.status === "assigned"
+
+  const newAssignedTickets = useMemo(
+    () =>
+      assignedTickets.filter(
+        (t) => t.status === "assigned"
+      ),
+    [assignedTickets]
   );
-  const inProgressTickets = assignedTickets.filter(
-    (t) => t.status === "in_progress"
+  const inProgressTickets = useMemo(
+    () =>
+      assignedTickets.filter(
+        (t) => t.status === "in_progress"
+      ),
+    [assignedTickets]
   );
-  const resolvedTickets = assignedTickets.filter(
-    (t) => t.status === "resolved"
+  const resolvedTickets = useMemo(
+    () =>
+      assignedTickets.filter(
+        (t) => t.status === "resolved"
+      ),
+    [assignedTickets]
   );
 
   return (
@@ -177,7 +201,9 @@ const AssignedTickets = () => {
                         </span>
                       </div>
                       <button
-                        disabled={updatingTicketId === ticket._id}
+                        disabled={
+                          updatingTicketId === ticket._id
+                        }
                         key={ticket._id}
                         onClick={() =>
                           handleUpdateStatus(
@@ -229,7 +255,7 @@ const AssignedTickets = () => {
                       </div>
                       <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
                         <span>
-                          From: {ticket.createdBy.name}
+                          From: {ticket?.createdBy.name}
                         </span>
                         <span>
                           <PriorityBadge
@@ -237,22 +263,44 @@ const AssignedTickets = () => {
                           />
                         </span>
                       </div>
-                      <button
-                        disabled={updatingTicketId === ticket._id}
-                        key={ticket._id}
-                        onClick={() =>
-                          handleUpdateStatus(
-                            ticket._id,
-                            "resolved"
-                          )
-                        }
-                        className="w-full text-sm text-white bg-[#62D58D] hover:bg-[#62D58D]/90 py-2 px-3 rounded-md inline-flex items-center justify-center"
-                      >
-                        {updatingTicketId === ticket._id
-                          ? "Resolving"
-                          : "Mark as Resolved"}{" "}
-                        <CheckCircle className="ml-1 h-3 w-3" />
-                      </button>
+                      <div className="flex items-center gap-2 justify-between text-sm text-gray-500 mb-3">
+                        <button
+                          disabled={
+                            updatingTicketId === ticket._id
+                          }
+                          key={ticket._id}
+                          onClick={() =>
+                            handleUpdateStatus(
+                              ticket._id,
+                              "resolved"
+                            )
+                          }
+                          className="w-full text-sm text-white bg-[#62D58D] hover:bg-[#62D58D]/90 py-2 px-3 rounded-md inline-flex items-center justify-center"
+                        >
+                          {updating.id === ticket._id && updating.action === "resolved"
+                            ? "Resolving"
+                            : "Mark as Resolved"}{" "}
+                          <CheckCircle className="ml-1 h-3 w-3" />
+                        </button>
+                        <button
+                          disabled={
+                            updatingTicketId === ticket._id
+                          }
+                          key={ticket._id}
+                          onClick={() =>
+                            handleUpdateStatus(
+                              ticket._id,
+                              "not_resolved"
+                            )
+                          }
+                          className="w-full text-sm text-white bg-red-500/80 hover:bg-red-500/90 py-2 px-3 rounded-md inline-flex items-center justify-center"
+                        >
+                          {updating.id === ticket._id && updating.action === "not_resolved"
+                            ? "Updating"
+                            : "Can't Resolved"}{" "}
+                          <OctagonX className="ml-1 h-3 w-3" />
+                        </button>
+                      </div>
                     </li>
                   ))}
                 </ul>

@@ -57,7 +57,23 @@ export const useAuthStore = create((set) => ({
       // Handle logout error
     }
   },
-  adminSignup: () => {},
+  adminSignup:async (credentials) => {
+    set({ isSigningUp: true });
+    try {
+      const res = await axios.post(
+        "/api/v1/auth/admin/signup",
+        credentials
+      );
+      set({ user: res.data.user, isSigningUp: false });
+      toast.success("Account created successfully");
+    } catch (error) {
+      console.error("Signup Error:", error);
+      toast.error(
+        error.response?.data?.message || "Signup failed"
+      );
+      set({ isSigningUp: false, user: null });
+    }
+  },
   adminLogin: () => {},
   adminLogout: () => {},
   authCheck: async () => {
@@ -72,3 +88,7 @@ export const useAuthStore = create((set) => ({
     }
   },
 }));
+
+
+
+

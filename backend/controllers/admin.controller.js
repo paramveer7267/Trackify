@@ -77,12 +77,13 @@ export const updateTicketStatus = async (req, res) => {
       "in_progress",
       "resolved",
       "assigned",
+      "not_resolved",
     ];
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
         message:
-          "Invalid status. Allowed statuses are: new, in_progress, resolved, assigned.",
+          "Invalid status. Allowed statuses are: new, in_progress, resolved, assigned, not_resolved.",
       });
     }
 

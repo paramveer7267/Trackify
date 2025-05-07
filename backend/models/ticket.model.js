@@ -31,7 +31,7 @@ const ticketSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["new", "in_progress", "resolved", "assigned"],
+      enum: ["new", "in_progress", "resolved", "assigned","not_resolved"],
       default: "new",
     },
     createdBy: {
