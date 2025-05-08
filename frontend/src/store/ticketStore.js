@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { removeTicket } from "../../../backend/controllers/user.controller";
 
 export const useTicketStore = create((set) => ({
   tickets: [],
@@ -128,10 +129,47 @@ export const useTicketStore = create((set) => ({
       console.error("Failed to update ticket:", err);
     }
   },
+  assignedTicket: async ({id,engineerId}) => {
+    set({ isLoading: true });
+    try {
+      const res = await axios.patch(
+        `/api/v1/admin/dashboard/assigned-ticket`,
+        {id,engineerId}
+      );
+      set((state) => ({
+        assignedTickets: state.assignedTickets.map(
+          (ticket) =>
+            ticket._id === id
+              ? {
+                  ...ticket,
+                  assignedTo: res.data.assignedTo,
+                }
+              : ticket
+        ),
+        tickets: state.tickets.map((ticket) =>
+          ticket._id === id
+            ? { ...ticket, assignedTo: res.data.assignedTo }
+            : ticket
+        ),
+        isLoading: false,
+      }));
+      toast.success("Ticket assigned successfully");
+    } catch (error) {
+      console.error("Assign Ticket Error:", error);
+
+      toast.error(
+        error.response?.data?.message ||
+          "Ticket assignment failed"
+      );
+      set({ isLoading: false });
+    }
+  },
   deleteTicket: async (ticketId) => {
     set({ isLoading: true });
     try {
-      await axios.delete(`/api/v1/tickets/${ticketId}`);
+      await axios.delete(
+        `/api/v1/admin/dashboard/delete/${ticketId}`
+      );
       set((state) => ({
         tickets: state.tickets.filter(
           (ticket) => ticket._id !== ticketId
@@ -150,6 +188,31 @@ export const useTicketStore = create((set) => ({
   },
   clearTickets: () => {
     set({ tickets: [] });
+  },
+
+  removeTicket: async ({id}) => {
+    set({ isLoading: true });
+    try {
+      const res = await axios.patch("/api/v1/dashboard/remove-ticket", {
+        id,
+      });
+      set((state) => ({
+        tickets: state.tickets.filter(
+          (ticket) => ticket._id !== id
+        ),
+        assignedTickets: state.assignedTickets.filter(
+          (ticket) => ticket._id !== id
+        ),
+        isLoading: false,
+      }));
+      toast.success("Ticket removed successfully");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "Ticket removal failed"
+      );
+      set({ isLoading: false });
+    }
   },
   setLoading: (loading) => {
     set({ isLoading: loading });

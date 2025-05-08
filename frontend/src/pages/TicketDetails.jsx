@@ -1,4 +1,4 @@
-import React, { use, useEffect } from "react";
+import React, { use, useEffect, useState } from "react";
 import DashboardLayout from "../components/DashboardLayout";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
@@ -16,12 +16,15 @@ import {
   Flag,
   User,
   MessageSquare,
+  TicketX,
 } from "lucide-react";
 import { useTicketStore } from "../store/ticketStore";
 import { useAuthStore } from "../store/authStore";
+import { toast } from "react-hot-toast";
 const TicketDetails = () => {
   const { user } = useAuthStore();
-  const { addComment } = useTicketStore();
+  const { addComment, deleteTicket, assignedTicket } =
+    useTicketStore();
   const [commentText, setCommentText] = React.useState("");
   const { id } = useParams(); // 🔑 Get ticket ID from URL
   const [ticket, setTicket] = React.useState(null);
@@ -29,6 +32,25 @@ const TicketDetails = () => {
   const [loading, setLoading] = React.useState(true);
   const [comments, setComments] = React.useState([]);
   const navigate = useNavigate();
+  const [engineers, setEngineers] = useState([]);
+
+  useEffect(() => {
+    const fetchEngineers = async () => {
+      try {
+        const res = await axios.get(
+          "/api/v1/admin/dashboard/all-engineers"
+        );
+        setEngineers(res.data.engineers);
+      } catch (error) {
+        console.error("Error fetching engineers:", error);
+        toast.error(
+          error.response?.data?.message ||
+            "Failed to fetch engineers"
+        );
+      }
+    };
+    fetchEngineers();
+  }, []);
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -171,24 +193,46 @@ const TicketDetails = () => {
       console.error("Failed to add comment", error);
     }
   };
-  console.log(ticket?.comments);
+  console.log(ticket);
   return (
     <DashboardLayout pageTitle={"Ticket Details"}>
       <div className=" bg-gray-50 min-h-screen ">
-        <button
-          onClick={() =>
-            navigate(
-              user?.role === "engineer"
-                ? "/dashboard/assigned-tickets"
-                : "/dashboard/tickets"
-            )
-          }
-          className="inline-flex mb-4 items-center text-lg   text-gray-500 hover:text-gray-700"
-        >
-          <ArrowLeft className="w-4 h-4 mr-1" />
-          Back
-        </button>
-
+        <div className="flex justify-between items-center mb-4">
+          <button
+            onClick={() =>
+              navigate(
+                user?.role === "engineer"
+                  ? "/dashboard/assigned-tickets"
+                  : user?.role === "admin"
+                  ? "/admin/dashboard"
+                  : "/dashboard/tickets"
+              )
+            }
+            className="inline-flex mb-4 items-center text-lg   text-gray-500 hover:text-gray-700"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back
+          </button>
+          {user?.role === "admin" && (
+            <button
+              onClick={() =>
+                deleteTicket(ticket._id).then(() => {
+                  navigate(
+                    user?.role === "engineer"
+                      ? "/dashboard/assigned-tickets"
+                      : user?.role === "admin"
+                      ? "/admin/dashboard"
+                      : "/dashboard/tickets"
+                  );
+                })
+              }
+              className="inline-flex mb-4 items-center text-lg   text-red-500 hover:text-red-400 cursor-pointer"
+            >
+              Delete Ticket
+              <TicketX className="size-5 ml-1" />
+            </button>
+          )}
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Ticket Section */}
           <div className="lg:col-span-2">
@@ -220,30 +264,30 @@ const TicketDetails = () => {
                   </div>
 
                   {/* {isAssignedEngineer &&
-                    ticket.status !== "resolved" && (
-                      <button
-                        onClick={() =>
-                          handleStatusUpdate("resolved")
-                        }
-                        className="btn btn-success"
-                      >
-                        <CheckCircle className="w-5 h-5 mr-2" />
-                        Mark as Resolved
-                      </button>
-                    )}
+                      ticket.status !== "resolved" && (
+                        <button
+                          onClick={() =>
+                            handleStatusUpdate("resolved")
+                          }
+                          className="btn btn-success"
+                        >
+                          <CheckCircle className="w-5 h-5 mr-2" />
+                          Mark as Resolved
+                        </button>
+                      )}
 
-                  {isAssignedEngineer &&
-                    ticket.status === "assigned" && (
-                      <button
-                        onClick={() =>
-                          handleStatusUpdate("in_progress")
-                        }
-                        className="btn btn-primary"
-                      >
-                        <Activity className="w-5 h-5 mr-2" />
-                        Start Working
-                      </button>
-                    )} */}
+                    {isAssignedEngineer &&
+                      ticket.status === "assigned" && (
+                        <button
+                          onClick={() =>
+                            handleStatusUpdate("in_progress")
+                          }
+                          className="btn btn-primary"
+                        >
+                          <Activity className="w-5 h-5 mr-2" />
+                          Start Working
+                        </button>
+                      )} */}
                 </div>
 
                 <div className="mt-4 p-4 bg-gray-50 rounded-md">
@@ -292,7 +336,7 @@ const TicketDetails = () => {
                 {comments.map((comment, index) => (
                   <div
                     key={index}
-                    className="flex items-start gap-3 p-3 bg-gray-100 rounded-md shadow-sm"
+                    className="flex items-start gap-3 p-3 bg-gray-100 rounded-xl shadow-sm"
                   >
                     {/* Avatar */}
                     <div className="flex-shrink-0">
@@ -432,12 +476,72 @@ const TicketDetails = () => {
                     </span>
                   </li>
                   <li className="flex items-start">
-                    <span className="w-1/3 text-sm font-medium text-gray-500">
-                      Assigned to:
-                    </span>
-                    <span className="w-2/3 text-sm font-semibold text-gray-600">
-                      {engineer || "Unassigned"}
-                    </span>
+                    {user?.role === "admin" &&
+                      engineers.length > 0 && (
+                        <>
+                          <span className="w-1/3 pt-2 text-sm font-medium text-gray-500">
+                            Assigned to:
+                          </span>
+                          <select
+                            id="assignEngineer"
+                            value={ticket?.assignedTo || ""}
+                            onChange={async (e) => {
+                              const engineerId =
+                                e.target.value;
+
+                              if (!id) {
+                                console.error(
+                                  "Ticket ID not available"
+                                );
+                                return;
+                              }
+
+                              try {
+                                await assignedTicket({
+                                  id,
+                                  engineerId,
+                                });
+                                const updated =
+                                  await axios.get(
+                                    `/api/v1/dashboard/tickets/${id}`
+                                  );
+                                setTicket(
+                                  updated.data.ticket
+                                );
+                              } catch (err) {
+                                console.error(
+                                  "Assign Ticket Error:",
+                                  err
+                                );
+                              }
+                            }}
+                            className="block border-gray-300 shadow-sm  rounded-lg p-2 text-sm w-2/3 focus:outline-none focus:shadow-md text-gray-600"
+                          >
+                            <option value="" disabled>
+                              Select Engineer
+                            </option>
+                            {engineers.map((eng) => (
+                              <option
+                                key={eng._id}
+                                value={eng._id}
+                              >
+                                {eng.name}
+                              </option>
+                            ))}
+                          </select>
+                        </>
+                      )}
+                    {user?.role === "engineer" ||
+                      (user?.role === "user" && (
+                        <>
+                          <span className="w-1/3 text-sm font-medium text-gray-500">
+                            Assigned to:
+                          </span>
+                          <span className="w-2/3 text-sm font-semibold text-gray-600">
+                            {engineer || "Unassigned"}
+                          </span>
+                        </>
+                      ))}
                   </li>
                 </ul>
               </div>

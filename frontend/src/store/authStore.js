@@ -74,8 +74,22 @@ export const useAuthStore = create((set) => ({
       set({ isSigningUp: false, user: null });
     }
   },
-  adminLogin: () => {},
-  adminLogout: () => {},
+  adminLogin:async (credentials) => {
+    set({ isLoggingIn: true });
+    try {
+      const res = await axios.post(
+        "/api/v1/auth/admin/login",
+        credentials, // if using cookies for auth
+      );
+      set({ user: res.data.user, isLoggingIn: false });
+      toast.success("Logged in successfully");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Login failed"
+      );
+      set({ isLoggingIn: false, user: null });
+    }
+  },
   authCheck: async () => {
     set({ isCheckingAuth: true });
     try {

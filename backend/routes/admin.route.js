@@ -6,42 +6,48 @@ import {
   updateTicketStatus,
   assignTicketToEngineer,
   authCheck,
+  getAllEngineers,
+  deleteTicket,
 } from "../controllers/admin.controller.js";
-import { protectRoute } from "../middleware/protectRoute.js";
-import { isAdmin } from "../middleware/isAdmin.js";
 
 const router = express.Router();
 
 // Get all tickets (admin only)
-router.get("/all-tickets", protectRoute, isAdmin, getAllTickets);
+router.get(
+  "/all-tickets",
+  getAllTickets
+);
 
 // Get all users (admin only)
 router.get(
   "/all-users",
-  protectRoute,
-  isAdmin,
   getAllUsers
+);
+router.get(
+  "/all-engineers",
+  getAllEngineers
 );
 
 // Get tickets for the logged-in user
-router.get("/:userId/tickets", protectRoute,isAdmin, getTicketsByUser);
+router.get(
+  "/:userId/tickets",
+  getTicketsByUser
+);
 
 // Update ticket status (admin only)
 router.patch(
   "/:ticketId/status",
-  protectRoute,
-  isAdmin,
   updateTicketStatus
 );
 
-
 router.patch(
-  "/assign-ticket",
-  protectRoute,
-  isAdmin,
+  "/assigned-ticket",
   assignTicketToEngineer
 );
 
-router.get("/authCheck", protectRoute, isAdmin, authCheck);
+router.delete(
+  "/delete/:ticketId",
+  deleteTicket
+);
 
 export default router;

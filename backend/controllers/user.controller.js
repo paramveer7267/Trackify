@@ -232,3 +232,34 @@ export const addComment = async (req, res) => {
       .json({ message: "Server error." });
   }
 };
+
+export const removeTicket = async (req, res) => {
+  try {
+    const { ticketId } = req.body;
+    const { id, assignedTickets } = req.user; // Assuming you have a user object set by the auth middleware
+
+    const ticket = await Ticket.findById(ticketId);
+    if (!ticket) {
+      return res.status(404).json({
+        success: false,
+        message: "Ticket not found",
+      });
+    }
+    // Remove the ticket from the user's assigned tickets if they are an engineer
+    if (
+      assignedTickets &&
+      assignedTickets.includes(ticketId)
+    ) {
+      await User.findByIdAndUpdate(
+        id,
+        { $pull: { assignedTickets: ticketId } },
+        { new: true }
+      );
+    }
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error" });
+  }
+};

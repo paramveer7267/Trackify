@@ -6,7 +6,7 @@ import { envVars } from "./config/envVars.js";
 import { connectDB } from "./config/db.js";
 import cookieParser from "cookie-parser";
 import { protectRoute } from "./middleware/protectRoute.js";
-import { isAdmin } from "./middleware/isAdmin.js";
+
 import adminRoutes from "./routes/admin.route.js"
 
 const app = express();
@@ -18,7 +18,7 @@ app.use(cookieParser());
 app.use("/api/v1/auth/user", authUserRoutes);
 app.use("/api/v1/auth/admin", authAdminRoutes);
 app.use("/api/v1/dashboard",protectRoute, userRoutes);
-app.use("/api/v1/admin/dashboard",protectRoute,isAdmin, adminRoutes);
+app.use("/api/v1/admin/dashboard",protectRoute, adminRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`); // Log the actual port

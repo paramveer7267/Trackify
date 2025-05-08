@@ -149,7 +149,7 @@ const MyTickets = () => {
                   <td className="px-4 py-5">
                     <Link
                       to={`/tickets/${ticket._id}`}
-                      className=" text-[#0F52BA]/70 hover:text-[#0F52BA]/90 font-semibold text-md"
+                      className=" text-[#0F52BA]/70 hover:text-[#0F52BA]/90 font-medium text-md"
                     >
                       {ticket?.title}
                     </Link>

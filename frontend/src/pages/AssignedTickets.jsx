@@ -22,12 +22,16 @@ import { useAuthStore } from "../store/authStore";
 import { useTicketStore } from "../store/ticketStore";
 
 const AssignedTickets = () => {
-  const [updating, setUpdating] = useState({ id: null, action: null });
+  const [updating, setUpdating] = useState({
+    id: null,
+    action: null,
+  });
 
   const {
     fetchAssignedTickets,
     assignedTickets,
     updateTicket,
+    removeTicket,
   } = useTicketStore();
   const [updatingTicketId, setUpdatingTicketId] =
     useState(null);
@@ -48,6 +52,9 @@ const AssignedTickets = () => {
   // Update ticket status handler
   const handleUpdateStatus = async (id, status) => {
     setUpdatingTicketId(id);
+    if (status === "not_resolved") {
+      removeTicket(id);
+    }
     setUpdating({ id, action: status });
     await updateTicket(id, { status });
     await fetchAssignedTickets();
@@ -277,7 +284,8 @@ const AssignedTickets = () => {
                           }
                           className="w-full text-sm text-white bg-[#62D58D] hover:bg-[#62D58D]/90 py-2 px-3 rounded-md inline-flex items-center justify-center"
                         >
-                          {updating.id === ticket._id && updating.action === "resolved"
+                          {updating.id === ticket._id &&
+                          updating.action === "resolved"
                             ? "Resolving"
                             : "Mark as Resolved"}{" "}
                           <CheckCircle className="ml-1 h-3 w-3" />
@@ -295,7 +303,8 @@ const AssignedTickets = () => {
                           }
                           className="w-full text-sm text-white bg-red-500/80 hover:bg-red-500/90 py-2 px-3 rounded-md inline-flex items-center justify-center"
                         >
-                          {updating.id === ticket._id && updating.action === "not_resolved"
+                          {updating.id === ticket._id &&
+                          updating.action === "not_resolved"
                             ? "Updating"
                             : "Can't Resolved"}{" "}
                           <OctagonX className="ml-1 h-3 w-3" />

@@ -4,7 +4,15 @@ import mongoose from "mongoose";
 // Get all tickets (Admin only)
 export const getAllTickets = async (req, res) => {
   try {
-    const tickets = await Ticket.find();
+    const tickets = await Ticket.find()
+      .populate("assignedTo", "name email")
+      .populate("createdBy", "name email");
+    if (!tickets || tickets.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No tickets found",
+      });
+    }
     res.status(200).json({
       success: true,
       tickets,
@@ -115,10 +123,10 @@ export const updateTicketStatus = async (req, res) => {
 // assign the ticket to engineer
 export const assignTicketToEngineer = async (req, res) => {
   try {
-    const { ticketId, engineerId } = req.body;
+    const { id, engineerId } = req.body;
 
     // Validate input
-    if (!ticketId || !engineerId) {
+    if (!id || !engineerId) {
       return res.status(400).json({
         success: false,
         message: "ticketId and engineerId are required",
@@ -126,7 +134,7 @@ export const assignTicketToEngineer = async (req, res) => {
     }
 
     // Find the ticket
-    const ticket = await Ticket.findById(ticketId);
+    const ticket = await Ticket.findById(id);
     if (!ticket) {
       return res.status(404).json({
         success: false,
@@ -151,7 +159,7 @@ export const assignTicketToEngineer = async (req, res) => {
 
     // Optional: If you are storing assigned tickets in Engineer's document (assignedTickets array), you can push ticketId
     if (engineer.assignedTickets) {
-      engineer.assignedTickets.push(ticketId);
+      engineer.assignedTickets.push(id);
       await engineer.save();
     }
 
@@ -172,6 +180,63 @@ export const assignTicketToEngineer = async (req, res) => {
   }
 };
 
+// Get all engineers (Admin only) 
+export const getAllEngineers = async (req, res) => {
+  try {
+    const engineers = await User.find({ role: "engineer" });
+    if (!engineers || engineers.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No engineers found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      engineers,
+    });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error" });
+  }
+};
+
+// Delete a ticket (Admin only)
+export const deleteTicket = async (req, res) => {
+  try {
+    const { ticketId } = req.params;
+
+    // Validate ticketId
+    if (!mongoose.Types.ObjectId.isValid(ticketId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid ticket ID",
+      });
+    }
+
+    // Find and delete the ticket
+    const ticket = await Ticket.findByIdAndDelete(ticketId);
+    if (!ticket) {
+      return res.status(404).json({
+        success: false,
+        message: "Ticket not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Ticket deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting ticket:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+// Check if the user is authenticated (Admin only)
 export async function authCheck(req, res) {
   try {
     res.status(200).json({

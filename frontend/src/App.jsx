@@ -7,12 +7,14 @@ import { useAuthStore } from "./store/authStore.js";
 import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import UserDashboard from "./pages/home/UserDashboard.jsx";
-import AdminDashboard from "./pages/home/AdminDashboard.jsx";
+import AdminDashboard from "./components/AdminDashboard.jsx";
 import CreateTicket from "./pages/CreateTicket.jsx";
 import MyTickets from "./pages/MyTickets.jsx";
 import TicketDetails from "./pages/TicketDetails.jsx";
 import AssignedTickets from "./pages/AssignedTickets.jsx";
-import './App.css';
+import "./App.css";
+import Users from "./pages/Users.jsx";
+import AllTickets from "./pages/AllTickets.jsx";
 function App() {
   const { user, isCheckingAuth, authCheck } =
     useAuthStore();
@@ -75,41 +77,35 @@ function App() {
         <Route
           path="/dashboard/tickets/create"
           element={
-            user ? (
-              <CreateTicket />
-            ) : (
-              <Navigate to="/" />
-            )
+            user ? <CreateTicket /> : <Navigate to="/" />
           }
         />
         <Route
           path="/dashboard/tickets"
           element={
-            user ? (
-              <MyTickets />
-            ) : (
-              <Navigate to="/" />
-            )
+            user ? <MyTickets /> : <Navigate to="/" />
           }
         />
         <Route
           path="/tickets/:id"
           element={
-            user ? (
-              <TicketDetails />
-            ) : (
-              <Navigate to="/" />
-            )
+            user ? <TicketDetails /> : <Navigate to="/" />
           }
         />
         <Route
           path="/dashboard/assigned-tickets"
           element={
-            user ? (
-              <AssignedTickets />
-            ) : (
-              <Navigate to="/" />
-            )
+            user ? <AssignedTickets /> : <Navigate to="/" />
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={user ? <Users /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/admin/all-tickets"
+          element={
+            user ? <AllTickets /> : <Navigate to="/" />
           }
         />
       </Routes>
