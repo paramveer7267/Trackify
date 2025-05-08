@@ -186,7 +186,7 @@ const AssignedTickets = () => {
                 <ul className="space-y-2">
                   {newAssignedTickets.map((ticket) => (
                     <li
-                      key={ticket._id}
+                      key={`new-${ticket._id}`}
                       className="p-3 bg-gray-50 rounded-md"
                     >
                       <div className="text-sm font-medium mb-1">
@@ -249,7 +249,7 @@ const AssignedTickets = () => {
                 <ul className="space-y-2">
                   {inProgressTickets.map((ticket) => (
                     <li
-                      key={ticket._id}
+                      key={`in_progress-${ticket._id}`}
                       className="p-3 bg-gray-50 rounded-md"
                     >
                       <div className="text-sm font-medium mb-1">
@@ -275,7 +275,7 @@ const AssignedTickets = () => {
                           disabled={
                             updatingTicketId === ticket._id
                           }
-                          key={ticket._id}
+                          key={`resolved-${ticket._id}`}
                           onClick={() =>
                             handleUpdateStatus(
                               ticket._id,
@@ -294,7 +294,7 @@ const AssignedTickets = () => {
                           disabled={
                             updatingTicketId === ticket._id
                           }
-                          key={ticket._id}
+                          key={`not_resolved-${ticket._id}`}
                           onClick={() =>
                             handleUpdateStatus(
                               ticket._id,
@@ -336,7 +336,7 @@ const AssignedTickets = () => {
                     .slice(0, 5)
                     .map((ticket) => (
                       <li
-                        key={ticket._id}
+                        key={`resolved-${ticket._id}`}
                         className="p-3 bg-gray-50 rounded-md"
                       >
                         <div className="text-sm font-medium mb-1">
@@ -425,49 +425,60 @@ const AssignedTickets = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {assignedTickets.map((ticket) => (
-                    <tr
-                      key={ticket._id}
-                      className="hover:bg-gray-50"
-                    >
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <Link
-                          to={`/tickets/${ticket._id}`}
-                          className="text-[#5585CE] hover:text-[#5585CE]/90 "
-                        >
-                          {ticket.title}
-                        </Link>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <StatusBadge
-                          status={ticket.status}
-                        />
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {ticket.createdBy.name}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {ticket.category}
-                      </td>
-                      {ticket?.status === "resolved" ? (
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <PriorityBadge
-                            priority={"Neutral"}
-                          />
-                        </td>
-                      ) : (
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <PriorityBadge
-                            priority={ticket?.priority.toLowerCase()}
-                          />
-                        </td>
-                      )}
-
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDate(ticket.createdAt)}
+                  {assignedTickets.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="6"
+                        className="text-center text-gray-500 py-8"
+                      >
+                        No tickets assigned.
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    assignedTickets.map((ticket) => (
+                      <tr
+                        key={`all-${ticket._id}`}
+                        className="hover:bg-gray-50"
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <Link
+                            to={`/tickets/${ticket._id}`}
+                            className="text-[#5585CE] hover:text-[#5585CE]/90 "
+                          >
+                            {ticket.title}
+                          </Link>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <StatusBadge
+                            status={ticket.status}
+                          />
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {ticket.createdBy.name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {ticket.category}
+                        </td>
+                        {ticket?.status === "resolved" ? (
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <PriorityBadge
+                              priority={"Neutral"}
+                            />
+                          </td>
+                        ) : (
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <PriorityBadge
+                              priority={ticket?.priority.toLowerCase()}
+                            />
+                          </td>
+                        )}
+
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {formatDate(ticket.createdAt)}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

@@ -1,6 +1,6 @@
 import { Ticket } from "../models/ticket.model.js";
 import User from "../models/user.model.js"; // optional, if you need user data for some operations
-
+import mongoose from "mongoose";
 // Create a new ticket
 export const createTicket = async (req, res) => {
   try {
@@ -234,32 +234,34 @@ export const addComment = async (req, res) => {
 };
 
 export const removeTicket = async (req, res) => {
-  try {
-    const { ticketId } = req.body;
-    const { id, assignedTickets } = req.user; // Assuming you have a user object set by the auth middleware
+  const { id } = req.params; // Ticket ID
+  const userId = req.user._id;
 
-    const ticket = await Ticket.findById(ticketId);
-    if (!ticket) {
-      return res.status(404).json({
-        success: false,
-        message: "Ticket not found",
-      });
+  try {
+    // Remove the ticket reference from the user's assignedTickets
+    const user = await User.findOneAndUpdate(
+      { _id: userId },
+      {
+        $pull: {
+          assignedTickets: new mongoose.Types.ObjectId(id),
+        },
+      },
+      { new: true }
+    );
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "User not found" });
     }
-    // Remove the ticket from the user's assigned tickets if they are an engineer
-    if (
-      assignedTickets &&
-      assignedTickets.includes(ticketId)
-    ) {
-      await User.findByIdAndUpdate(
-        id,
-        { $pull: { assignedTickets: ticketId } },
-        { new: true }
-      );
-    }
-  } catch (err) {
-    console.error(err);
+
+    res
+      .status(200)
+      .json({ message: "Ticket removed successfully" });
+  } catch (error) {
+    console.error("Error removing ticket:", error);
     res
       .status(500)
-      .json({ success: false, message: "Server error" });
+      .json({ message: "Failed to remove ticket", error });
   }
 };

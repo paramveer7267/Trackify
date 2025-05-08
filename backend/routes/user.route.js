@@ -38,6 +38,6 @@ router.patch(
   updateTicketStatus
 );
 
-router.patch("/remove/:ticketId",removeTicket);
+router.delete("/remove-ticket/:id",removeTicket);
 
 export default router;

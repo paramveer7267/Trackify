@@ -28,7 +28,13 @@ export const getAllTickets = async (req, res) => {
 // Get all tickets (Admin only)
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find({role: "user"});
+    if (!users || users.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No users found",
+      });
+    }
     res.status(200).json({
       success: true,
       users,
@@ -157,8 +163,11 @@ export const assignTicketToEngineer = async (req, res) => {
     ticket.status = "assigned"; // Set status to 'assigned' or use the provided status
     await ticket.save();
 
-    // Optional: If you are storing assigned tickets in Engineer's document (assignedTickets array), you can push ticketId
-    if (engineer.assignedTickets) {
+    // Only push the ticket if it's not already in the array
+    if (
+      engineer.assignedTickets &&
+      !engineer.assignedTickets.includes(id)
+    ) {
       engineer.assignedTickets.push(id);
       await engineer.save();
     }
@@ -180,7 +189,7 @@ export const assignTicketToEngineer = async (req, res) => {
   }
 };
 
-// Get all engineers (Admin only) 
+// Get all engineers (Admin only)
 export const getAllEngineers = async (req, res) => {
   try {
     const engineers = await User.find({ role: "engineer" });
@@ -236,6 +245,42 @@ export const deleteTicket = async (req, res) => {
     });
   }
 };
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Validate userId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID",
+      });
+    }
+
+    // Find and delete the user
+    const user = await User.findByIdAndDelete(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+
 // Check if the user is authenticated (Admin only)
 export async function authCheck(req, res) {
   try {

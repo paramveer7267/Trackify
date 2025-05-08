@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { removeTicket } from "../../../backend/controllers/user.controller";
 
 export const useTicketStore = create((set) => ({
   tickets: [],
@@ -129,12 +128,12 @@ export const useTicketStore = create((set) => ({
       console.error("Failed to update ticket:", err);
     }
   },
-  assignedTicket: async ({id,engineerId}) => {
+  assignedTicket: async ({ id, engineerId }) => {
     set({ isLoading: true });
     try {
       const res = await axios.patch(
         `/api/v1/admin/dashboard/assigned-ticket`,
-        {id,engineerId}
+        { id, engineerId }
       );
       set((state) => ({
         assignedTickets: state.assignedTickets.map(
@@ -190,12 +189,12 @@ export const useTicketStore = create((set) => ({
     set({ tickets: [] });
   },
 
-  removeTicket: async ({id}) => {
+  removeTicket: async (id) => {
     set({ isLoading: true });
     try {
-      const res = await axios.patch("/api/v1/dashboard/remove-ticket", {
-        id,
-      });
+      await axios.delete(
+        `/api/v1/dashboard/remove-ticket/${id}`
+      );
       set((state) => ({
         tickets: state.tickets.filter(
           (ticket) => ticket._id !== id
@@ -213,106 +212,5 @@ export const useTicketStore = create((set) => ({
       );
       set({ isLoading: false });
     }
-  },
-  setLoading: (loading) => {
-    set({ isLoading: loading });
-  },
-  setTickets: (tickets) => {
-    set({ tickets });
-  },
-  setTicket: (ticket) => {
-    set((state) => ({
-      tickets: [...state.tickets, ticket],
-    }));
-  },
-  setTicketStatus: (ticketId, status) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, status }
-          : ticket
-      ),
-    }));
-  },
-  setTicketPriority: (ticketId, priority) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, priority }
-          : ticket
-      ),
-    }));
-  },
-  setTicketCategory: (ticketId, category) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, category }
-          : ticket
-      ),
-    }));
-  },
-  setTicketAssignedTo: (ticketId, assignedTo) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, assignedTo }
-          : ticket
-      ),
-    }));
-  },
-  setTicketCreatedBy: (ticketId, createdBy) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, createdBy }
-          : ticket
-      ),
-    }));
-  },
-  setTicketDescription: (ticketId, description) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, description }
-          : ticket
-      ),
-    }));
-  },
-  setTicketTitle: (ticketId, title) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, title }
-          : ticket
-      ),
-    }));
-  },
-  setTicketCreatedAt: (ticketId, createdAt) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, createdAt }
-          : ticket
-      ),
-    }));
-  },
-  setTicketUpdatedAt: (ticketId, updatedAt) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, updatedAt }
-          : ticket
-      ),
-    }));
-  },
-  setTicketId: (ticketId) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, _id: ticketId }
-          : ticket
-      ),
-    }));
   },
 }));

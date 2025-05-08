@@ -8,6 +8,7 @@ import {
   authCheck,
   getAllEngineers,
   deleteTicket,
+  deleteUser,
 } from "../controllers/admin.controller.js";
 
 const router = express.Router();
@@ -49,5 +50,10 @@ router.delete(
   "/delete/:ticketId",
   deleteTicket
 );
+router.delete(
+  "/delete-user/:userId",
+  deleteUser
+);
+
 
 export default router;
