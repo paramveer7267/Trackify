@@ -10,7 +10,7 @@ import path from "path";
 import adminRoutes from "./routes/admin.route.js";
 
 const app = express();
-const PORT = envVars.PORT || 5000; // Default to 5000 if no PORT is defined in envVars
+const PORT = envVars.PORT || 10000; // Default to 5000 if no PORT is defined in envVars
 app.use(express.json());
 app.use(cookieParser());
 
@@ -41,7 +41,7 @@ if (envVars.NODE_ENV === "production") {
   });
 }
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server started on port ${PORT}`); // Log the actual port
   connectDB(); // Connect to the database
 });
