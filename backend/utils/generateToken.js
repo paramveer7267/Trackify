@@ -16,7 +16,7 @@ export const generateTokenAndSetCookie = (userId,role, res) => {
     httpOnly: true, // Prevent JavaScript from accessing the cookie
     maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days in milliseconds
     sameSite: "strict", // Helps prevent CSRF attacks
-    secure: envVars.NODE_ENV !== "development", // Only use Secure cookies in production
+    secure: envVars.NODE_ENV === "development", // Only use Secure cookies in production
   });
 
   return token;
