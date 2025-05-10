@@ -128,10 +128,47 @@ export const useTicketStore = create((set) => ({
       console.error("Failed to update ticket:", err);
     }
   },
+  assignedTicket: async ({ id, engineerId }) => {
+    set({ isLoading: true });
+    try {
+      const res = await axios.patch(
+        `/api/v1/admin/dashboard/assigned-ticket`,
+        { id, engineerId }
+      );
+      set((state) => ({
+        assignedTickets: state.assignedTickets.map(
+          (ticket) =>
+            ticket._id === id
+              ? {
+                  ...ticket,
+                  assignedTo: res.data.assignedTo,
+                }
+              : ticket
+        ),
+        tickets: state.tickets.map((ticket) =>
+          ticket._id === id
+            ? { ...ticket, assignedTo: res.data.assignedTo }
+            : ticket
+        ),
+        isLoading: false,
+      }));
+      toast.success("Ticket assigned successfully");
+    } catch (error) {
+      console.error("Assign Ticket Error:", error);
+
+      toast.error(
+        error.response?.data?.message ||
+          "Ticket assignment failed"
+      );
+      set({ isLoading: false });
+    }
+  },
   deleteTicket: async (ticketId) => {
     set({ isLoading: true });
     try {
-      await axios.delete(`/api/v1/tickets/${ticketId}`);
+      await axios.delete(
+        `/api/v1/admin/dashboard/delete/${ticketId}`
+      );
       set((state) => ({
         tickets: state.tickets.filter(
           (ticket) => ticket._id !== ticketId
@@ -151,105 +188,29 @@ export const useTicketStore = create((set) => ({
   clearTickets: () => {
     set({ tickets: [] });
   },
-  setLoading: (loading) => {
-    set({ isLoading: loading });
-  },
-  setTickets: (tickets) => {
-    set({ tickets });
-  },
-  setTicket: (ticket) => {
-    set((state) => ({
-      tickets: [...state.tickets, ticket],
-    }));
-  },
-  setTicketStatus: (ticketId, status) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, status }
-          : ticket
-      ),
-    }));
-  },
-  setTicketPriority: (ticketId, priority) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, priority }
-          : ticket
-      ),
-    }));
-  },
-  setTicketCategory: (ticketId, category) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, category }
-          : ticket
-      ),
-    }));
-  },
-  setTicketAssignedTo: (ticketId, assignedTo) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, assignedTo }
-          : ticket
-      ),
-    }));
-  },
-  setTicketCreatedBy: (ticketId, createdBy) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, createdBy }
-          : ticket
-      ),
-    }));
-  },
-  setTicketDescription: (ticketId, description) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, description }
-          : ticket
-      ),
-    }));
-  },
-  setTicketTitle: (ticketId, title) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, title }
-          : ticket
-      ),
-    }));
-  },
-  setTicketCreatedAt: (ticketId, createdAt) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, createdAt }
-          : ticket
-      ),
-    }));
-  },
-  setTicketUpdatedAt: (ticketId, updatedAt) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, updatedAt }
-          : ticket
-      ),
-    }));
-  },
-  setTicketId: (ticketId) => {
-    set((state) => ({
-      tickets: state.tickets.map((ticket) =>
-        ticket._id === ticketId
-          ? { ...ticket, _id: ticketId }
-          : ticket
-      ),
-    }));
+
+  removeTicket: async (id) => {
+    set({ isLoading: true });
+    try {
+      await axios.delete(
+        `/api/v1/dashboard/remove-ticket/${id}`
+      );
+      set((state) => ({
+        tickets: state.tickets.filter(
+          (ticket) => ticket._id !== id
+        ),
+        assignedTickets: state.assignedTickets.filter(
+          (ticket) => ticket._id !== id
+        ),
+        isLoading: false,
+      }));
+      toast.success("Ticket removed successfully");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "Ticket removal failed"
+      );
+      set({ isLoading: false });
+    }
   },
 }));

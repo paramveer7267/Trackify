@@ -7,36 +7,37 @@ import {
   updateTicketStatus,
   getUser,
   addComment,
+  removeTicket,
 } from "../controllers/user.controller.js";
-import { protectRoute } from "../middleware/protectRoute.js";
 
 const router = express.Router();
 
 // Create a ticket (any user)
-router.post("/create", protectRoute, createTicket);
+router.post("/create",  createTicket);
 router.post(
   "/tickets/:ticketId/comments",
-  protectRoute,
+  
   addComment
 );
 
 // Get tickets for the logged-in user
-router.get("/user", protectRoute, getUserTickets);
-router.get("/user/:id", protectRoute, getUser);
+router.get("/user",  getUserTickets);
+router.get("/user/:id", getUser);
 
-router.get("/tickets/:id", protectRoute, getTicketById);
+router.get("/tickets/:id",  getTicketById);
 
 // for engineer assigned tickets
 router.get(
   "/assigned-tickets",
-  protectRoute,
   getAssignedTickets
 );
 
 // Update ticket status (admin & engineer only)
 router.patch(
   "/:ticketId/status",
-  protectRoute,
   updateTicketStatus
 );
+
+router.delete("/remove-ticket/:id",removeTicket);
+
 export default router;

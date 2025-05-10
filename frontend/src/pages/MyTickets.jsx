@@ -6,6 +6,8 @@ import {
   Clock,
   CheckCircle,
   Activity,
+  OctagonX,
+  Check,
   AlertCircle,
   Send,
   ArrowLeft,
@@ -30,19 +32,23 @@ const MyTickets = () => {
     switch (status) {
       case "new":
         badgeClass = "bg-blue-100 text-blue-800";
-        icon = <Clock className="w-4 h-4 mr-1" />;
+        icon = <Clock className="w-3 h-3 mr-1" />;
         break;
       case "assigned":
         badgeClass = "bg-purple-100 text-purple-800";
-        icon = <User className="w-4 h-4 mr-1" />;
+        icon = <Clock className="w-3 h-3 mr-1" />;
         break;
       case "in_progress":
         badgeClass = "bg-yellow-100 text-yellow-800";
-        icon = <Activity className="w-4 h-4 mr-1" />;
+        icon = <Activity className="w-3 h-3 mr-1" />;
         break;
       case "resolved":
         badgeClass = "bg-green-100 text-green-800";
-        icon = <CheckCircle className="w-4 h-4 mr-1" />;
+        icon = <CheckCircle className="w-3 h-3 mr-1" />;
+        break;
+      case "not_resolved":
+        badgeClass = "bg-amber-100 text-amber-800";
+        icon = <OctagonX className="w-3 h-3 mr-1" />;
         break;
       default:
         badgeClass = "bg-gray-100 text-gray-800";
@@ -53,8 +59,8 @@ const MyTickets = () => {
         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${badgeClass}`}
       >
         {icon}
-        {status?.replace("_", " ").charAt(0).toUpperCase() +
-          status?.replace("_", " ").slice(1)}
+        {status.replace("_", " ").charAt(0).toUpperCase() +
+          status.replace("_", " ").slice(1)}
       </span>
     );
   };
@@ -73,7 +79,8 @@ const MyTickets = () => {
         badgeClass = "bg-orange-500/80 text-white";
         break;
       case "critical":
-        badgeClass = "bg-red-500/80 text-white animate-pulse";
+        badgeClass =
+          "bg-red-500/80 text-white animate-pulse";
         break;
       default:
         badgeClass = "bg-green-500/80 text-white";
@@ -119,7 +126,7 @@ const MyTickets = () => {
                   Priority
                 </th>
                 <th className="px-4 py-4 text-xs uppercase tracking-wider font-sans">
-                  Created 
+                  Created
                 </th>
               </tr>
             </thead>
@@ -142,7 +149,7 @@ const MyTickets = () => {
                   <td className="px-4 py-5">
                     <Link
                       to={`/tickets/${ticket._id}`}
-                      className=" text-[#0F52BA]/70 hover:text-[#0F52BA]/90 font-semibold text-md"
+                      className=" text-[#0F52BA]/70 hover:text-[#0F52BA]/90 font-medium text-md"
                     >
                       {ticket?.title}
                     </Link>

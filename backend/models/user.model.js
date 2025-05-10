@@ -27,7 +27,11 @@ const userSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Ticket",
       },
-    ], // <-- ADD THIS
+    ],
+    specialization: {
+      type: String,
+      default: "General Support",
+    },
   },
 
   { timestamps: true }

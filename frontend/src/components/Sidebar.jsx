@@ -8,7 +8,9 @@ import {
   Ticket,
   LogOut,
   PlusCircle,
-  TicketIcon
+  TicketPlus,
+  TicketIcon,
+  Tickets,
 } from "lucide-react";
 
 const Sidebar = ({ isOpen, isMobile, toggleSidebar }) => {
@@ -41,46 +43,89 @@ const Sidebar = ({ isOpen, isMobile, toggleSidebar }) => {
           <div className="flex items-center justify-center">
             <TicketCheck className="h-8 w-6 text-white" />
             <span className="ml-2 text-xl font-bold">
-              IssueResolver
+              Trackify
             </span>
           </div>
         </div>
 
         <div className="px-3 py-4 flex-1 overflow-y-auto">
           <nav className="space-y-1">
-            <NavLink
-              end
-              to="/dashboard"
-              className={navLinkClass}
-              onClick={() => isMobile && toggleSidebar()}
-            >
-              <LayoutDashboard className="mr-3 h-5 w-5" />
-              Dashboard
-            </NavLink>
-
             {currentUser?.role === "admin" && (
-              <NavLink
-                to="/users"
-                className={navLinkClass}
-                onClick={() => isMobile && toggleSidebar()}
-              >
-                <Users className="mr-3 h-5 w-5" />
-                Users & Engineers
-              </NavLink>
+              <>
+                <NavLink
+                  end
+                  to="/admin/dashboard"
+                  className={navLinkClass}
+                  onClick={() =>
+                    isMobile && toggleSidebar()
+                  }
+                >
+                  <LayoutDashboard className="mr-3 h-5 w-5" />
+                  Dashboard
+                </NavLink>
+                <NavLink
+                  end
+                  to="/admin/users"
+                  className={navLinkClass}
+                  onClick={() =>
+                    isMobile && toggleSidebar()
+                  }
+                >
+                  <Users className="mr-3 h-5 w-5" />
+                  Users & Engineers
+                </NavLink>
+                <NavLink
+                  end
+                  to="/admin/all-tickets"
+                  className={navLinkClass}
+                  onClick={() =>
+                    isMobile && toggleSidebar()
+                  }
+                >
+                  <Tickets className="mr-3 h-5 w-5" />
+                  All Tickets
+                </NavLink>
+              </>
             )}
             {currentUser?.role === "engineer" && (
-              <NavLink
-                to="/dashboard/assigned-tickets"
-                className={navLinkClass}
-                onClick={() => isMobile && toggleSidebar()}
-              >
-                <TicketIcon className="mr-3 h-5 w-5" />
-                Assigned Tickets
-              </NavLink>
+              <>
+                <NavLink
+                  end
+                  to="/dashboard"
+                  className={navLinkClass}
+                  onClick={() =>
+                    isMobile && toggleSidebar()
+                  }
+                >
+                  <LayoutDashboard className="mr-3 h-5 w-5" />
+                  Dashboard
+                </NavLink>
+                <NavLink
+                  to="/dashboard/assigned-tickets"
+                  className={navLinkClass}
+                  onClick={() =>
+                    isMobile && toggleSidebar()
+                  }
+                >
+                  <TicketIcon className="mr-3 h-5 w-5" />
+                  Assigned Tickets
+                </NavLink>
+              </>
             )}
 
             {currentUser?.role === "user" && (
               <>
+                <NavLink
+                  end
+                  to="/dashboard"
+                  className={navLinkClass}
+                  onClick={() =>
+                    isMobile && toggleSidebar()
+                  }
+                >
+                  <LayoutDashboard className="mr-3 h-5 w-5" />
+                  Dashboard
+                </NavLink>
                 <NavLink
                   to="/dashboard/tickets/create"
                   end

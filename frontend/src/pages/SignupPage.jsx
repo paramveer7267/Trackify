@@ -8,6 +8,7 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
+  const [specialization, setSpecialization] = useState("");
   const [showPassword, setShowPassword] = useState(false);  
   const { userSignup } = useAuthStore();
 
@@ -18,6 +19,7 @@ export default function SignupPage() {
       email,
       password,
       role: role.toLowerCase(),
+      specialization,
     });
     // You can add more fields here as needed
     // Here you would typically send the data to your backend API for signup
@@ -127,10 +129,26 @@ export default function SignupPage() {
               </option>
               <option>User</option>
               <option>Engineer</option>
-              {/* <option>Support</option> */}
             </select>
           </div>
-
+              
+              {/* Conditional Textarea for Engineer */}
+      {role === "Engineer" && (
+        <div className="mt-4">
+          <label htmlFor="specialization" className="block text-sm mb-1">
+            Specialization
+          </label>
+          <textarea
+            id="specialization"
+            value={specialization}
+            onChange={(e) => setSpecialization(e.target.value)}
+            rows="1"
+            className="w-full border rounded px-3 py-2 text-gray-700 focus:outline-none focus:ring"
+            placeholder="Enter your specialization"
+            required
+          />
+        </div>
+      )}
           {/* Company & Department */}
           {/* <div className="flex gap-4">
             <div className="w-1/2">

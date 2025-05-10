@@ -1,6 +1,6 @@
 import { Ticket } from "../models/ticket.model.js";
 import User from "../models/user.model.js"; // optional, if you need user data for some operations
-
+import mongoose from "mongoose";
 // Create a new ticket
 export const createTicket = async (req, res) => {
   try {
@@ -108,12 +108,13 @@ export const updateTicketStatus = async (req, res) => {
       "in_progress",
       "resolved",
       "assigned",
+      "not_resolved",
     ];
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
         message:
-          "Invalid status. Allowed statuses are: new, in_progress, resolved, assigned.",
+          "Invalid status. Allowed statuses are: new, in_progress, resolved, assigned, not_resolved.",
       });
     }
 
@@ -229,5 +230,38 @@ export const addComment = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Server error." });
+  }
+};
+
+export const removeTicket = async (req, res) => {
+  const { id } = req.params; // Ticket ID
+  const userId = req.user._id;
+
+  try {
+    // Remove the ticket reference from the user's assignedTickets
+    const user = await User.findOneAndUpdate(
+      { _id: userId },
+      {
+        $pull: {
+          assignedTickets: new mongoose.Types.ObjectId(id),
+        },
+      },
+      { new: true }
+    );
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "User not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Ticket removed successfully" });
+  } catch (error) {
+    console.error("Error removing ticket:", error);
+    res
+      .status(500)
+      .json({ message: "Failed to remove ticket", error });
   }
 };
