@@ -12,14 +12,14 @@ import CreateTicket from "./pages/CreateTicket.jsx";
 import MyTickets from "./pages/MyTickets.jsx";
 import TicketDetails from "./pages/TicketDetails.jsx";
 import AssignedTickets from "./pages/AssignedTickets.jsx";
+import Profile from "./pages/Profile.jsx";
 import "./App.css";
 import Users from "./pages/Users.jsx";
 import AllTickets from "./pages/AllTickets.jsx";
 function App() {
   const { user, isCheckingAuth, authCheck } =
     useAuthStore();
-
-  console.log("user", user);
+  const currentUser = user;
   useEffect(() => {
     authCheck();
   }, []);
@@ -106,6 +106,16 @@ function App() {
           path="/admin/all-tickets"
           element={
             user ? <AllTickets /> : <Navigate to="/" />
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            user ? (
+              <Profile />
+            ) : (
+              <Navigate to="/" />
+            )
           }
         />
       </Routes>

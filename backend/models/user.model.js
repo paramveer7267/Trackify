@@ -30,7 +30,6 @@ const userSchema = new mongoose.Schema(
     ],
     specialization: {
       type: String,
-      required:true,
       default: "General Support",
     },
   },
