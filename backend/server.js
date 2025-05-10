@@ -7,19 +7,41 @@ import { connectDB } from "./config/db.js";
 import cookieParser from "cookie-parser";
 import { protectRoute } from "./middleware/protectRoute.js";
 import path from "path";
-import adminRoutes from "./routes/admin.route.js"
+import adminRoutes from "./routes/admin.route.js";
 
 const app = express();
 const PORT = envVars.PORT || 5000; // Default to 5000 if no PORT is defined in envVars
 app.use(express.json());
-app.use(cookieParser()); 
+app.use(cookieParser());
 
-app.use
+app.use;
 
 app.use("/api/v1/auth/user", authUserRoutes);
 app.use("/api/v1/auth/admin", authAdminRoutes);
-app.use("/api/v1/dashboard",protectRoute, userRoutes);
-app.use("/api/v1/admin/dashboard",protectRoute, adminRoutes);
+app.use("/api/v1/dashboard", protectRoute, userRoutes);
+app.use(
+  "/api/v1/admin/dashboard",
+  protectRoute,
+  adminRoutes
+);
+
+const __dirname = path.resolve();
+
+if (envVars.NODE_ENV === "production") {
+  app.use(
+    express.static(path.join(__dirname, "/frontend/dist"))
+  );
+  app.get("*", (req, res) => {
+    res.sendFile(
+      path.resolve(
+        __dirname,
+        "frontend",
+        "dist",
+        "index.html"
+      )
+    );
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`); // Log the actual port
