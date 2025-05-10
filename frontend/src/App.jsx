@@ -6,16 +6,16 @@ import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./store/authStore.js";
 import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import UserDashboard from "./pages/home/UserDashboard.jsx";
-import AdminDashboard from "./components/AdminDashboard.jsx";
-import CreateTicket from "./pages/CreateTicket.jsx";
-import MyTickets from "./pages/MyTickets.jsx";
+import UserDashboard from "./pages/User/UserDashboard.jsx";
+import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
+import CreateTicket from "./pages/User/CreateTicket.jsx";
+import MyTickets from "./pages/User/MyTickets.jsx";
 import TicketDetails from "./pages/TicketDetails.jsx";
-import AssignedTickets from "./pages/AssignedTickets.jsx";
+import AssignedTickets from "./pages/Engineer/AssignedTickets.jsx";
 import Profile from "./pages/Profile.jsx";
 import "./App.css";
-import Users from "./pages/Users.jsx";
-import AllTickets from "./pages/AllTickets.jsx";
+import Users from "./pages/Admin/Users.jsx";
+import AllTickets from "./pages/Admin/AllTickets.jsx";
 function App() {
   const { user, isCheckingAuth, authCheck } =
     useAuthStore();
