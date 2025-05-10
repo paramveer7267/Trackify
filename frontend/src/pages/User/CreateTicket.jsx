@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import DashboardLayout from "../components/DashboardLayout";
-import { useTicketStore } from "../store/ticketStore";
-import { Link } from "react-router-dom";
+import DashboardLayout from "../../components/DashboardLayout";
+import { useTicketStore } from "../../store/ticketStore";
 import { useNavigate } from "react-router-dom"; // ✅ Add this at the top
 
 const CreateTicket = () => {

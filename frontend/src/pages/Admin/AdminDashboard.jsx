@@ -1,5 +1,5 @@
-import DashboardLayout from "./DashboardLayout";
-import TicketDashboard from "./TicketDashboard";
+import DashboardLayout from "../../components/DashboardLayout";
+import TicketDashboard from "../../components/TicketDashboard";
 
 const AdminDashboard = () => {
   return (

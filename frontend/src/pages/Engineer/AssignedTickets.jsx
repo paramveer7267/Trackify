@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import DashboardLayout from "../components/DashboardLayout";
+import DashboardLayout from "../../components/DashboardLayout";
 
 import {
   CheckCircle,
@@ -18,8 +18,8 @@ import {
   User,
   MessageSquare,
 } from "lucide-react";
-import { useAuthStore } from "../store/authStore";
-import { useTicketStore } from "../store/ticketStore";
+import { useAuthStore } from "../../store/authStore";
+import { useTicketStore } from "../../store/ticketStore";
 
 const AssignedTickets = () => {
   const [updating, setUpdating] = useState({

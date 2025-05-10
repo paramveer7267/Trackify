@@ -243,7 +243,7 @@ export const removeTicket = async (req, res) => {
       { _id: userId },
       {
         $pull: {
-          assignedTickets: new mongoose.Types.ObjectId(id),
+          assignedTickets:id,
         },
       },
       { new: true }

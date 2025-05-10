@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+
 import { useAuthStore } from "../../store/authStore";
-import axios from "axios";
+
 import DashboardLayout from "../../components/DashboardLayout";
 import { Link } from "react-router-dom";
 const UserDashboard = () => {

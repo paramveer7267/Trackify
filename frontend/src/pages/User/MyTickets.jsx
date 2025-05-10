@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import DashboardLayout from "../components/DashboardLayout";
-import { useTicketStore } from "../store/ticketStore";
+import DashboardLayout from "../../components/DashboardLayout";
+import { useTicketStore } from "../../store/ticketStore";
 import { Link } from "react-router-dom";
 import {
   Clock,
