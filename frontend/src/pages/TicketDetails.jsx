@@ -29,7 +29,7 @@ const TicketDetails = () => {
   const { id } = useParams(); // 🔑 Get ticket ID from URL
   const [ticket, setTicket] = React.useState(null);
   const [engineer, setEngineer] = React.useState(null);
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
   const [comments, setComments] = React.useState([]);
   const navigate = useNavigate();
   const [engineers, setEngineers] = useState([]);
@@ -175,7 +175,7 @@ const TicketDetails = () => {
   const handleComment = async (e) => {
     e.preventDefault();
     if (!commentText.trim()) return;
-
+    setLoading(true); // Start loading
     try {
       const newComment = {
         text: commentText,
@@ -191,9 +191,11 @@ const TicketDetails = () => {
       setCommentText("");
     } catch (error) {
       console.error("Failed to add comment", error);
+    } finally {
+      setLoading(false);
     }
   };
-  console.log(ticket);
+
   return (
     <DashboardLayout pageTitle={"Ticket Details"}>
       <div className=" bg-gray-50 min-h-screen ">
@@ -378,10 +380,13 @@ const TicketDetails = () => {
                 ></textarea>
 
                 <button
+                  disabled={loading} // Button will be disabled when loading is true
                   onClick={handleComment}
-                  className="bg-[#5585CE] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#5585CE]/90"
+                  className={`bg-[#5585CE] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#5585CE]/90 ${
+                    loading ? " opacity-50" : ""
+                  }`}
                 >
-                  Add Comment
+                  {loading ? "Commenting" : "Add Comment"}
                 </button>
               </div>
             </div>
