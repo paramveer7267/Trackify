@@ -172,6 +172,12 @@ export const getTicketById = async (req, res) => {
 export const getUser = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID",
+      });
+    }
     const user = await User.findById(id).select(
       "-password"
     );
@@ -243,7 +249,7 @@ export const removeTicket = async (req, res) => {
       { _id: userId },
       {
         $pull: {
-          assignedTickets:id,
+          assignedTickets: id,
         },
       },
       { new: true }

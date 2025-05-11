@@ -52,6 +52,12 @@ export const getTicketsByUser = async (req, res) => {
   try {
     const { userId } = req.params;
 
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or missing user ID",
+      });
+    }
     // Optional: Check if the user exists
     const user = await User.findById(userId);
     if (!user) {
