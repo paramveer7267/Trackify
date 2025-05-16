@@ -8,6 +8,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const { userLogin, adminLogin } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
+  const [credentials, setCredentials] = useState(false);
   const handleSubmit = (e) => {
     e.preventDefault();
     if (activeTab === "user") {
@@ -22,6 +23,12 @@ export default function LoginPage() {
       });
     }
   };
+  function handleShow() {
+    setCredentials(true);
+    if (credentials) {
+      setCredentials(false);
+    }
+  }
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-600 to-cyan-400">
       <Link
@@ -128,7 +135,42 @@ export default function LoginPage() {
           >
             Sign In
           </button>
-
+          {activeTab === "user" ? (
+            <div>
+              <button
+                onClick={handleShow}
+                className="flex items-center text-blue-600 hover:underline"
+              >
+                Show User & Engineer Demo
+              </button>
+              {credentials && (
+                <div className="text-md">
+                  <div>
+                    Email: user@gmail.com | |
+                    engineer@gmail.com
+                  </div>
+                  <div>
+                    Password: user@123 | | engineer@123
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div>
+              <button
+                onClick={handleShow}
+                className="flex items-center text-blue-600 hover:underline"
+              >
+                Show Admin Demo
+              </button>
+              {credentials && (
+                <div className="text-md">
+                  <div>Email: admin@gmail.com </div>
+                  <div>Password: admin@123 </div>
+                </div>
+              )}
+            </div>
+          )}
           <p className="text-sm text-center mt-4">
             Don't have an account?{" "}
             <Link
