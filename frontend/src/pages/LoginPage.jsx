@@ -138,6 +138,7 @@ export default function LoginPage() {
           {activeTab === "user" ? (
             <div>
               <button
+                type="button"
                 onClick={handleShow}
                 className="flex items-center text-blue-600 hover:underline"
               >
@@ -158,6 +159,7 @@ export default function LoginPage() {
           ) : (
             <div>
               <button
+                type="button"
                 onClick={handleShow}
                 className="flex items-center text-blue-600 hover:underline"
               >
