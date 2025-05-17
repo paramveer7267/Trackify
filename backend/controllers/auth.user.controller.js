@@ -21,7 +21,14 @@ export const userSignup = async (req, res) => {
         message: "All fields are required",
       });
     }
-
+    const nameRegex = /^[A-Za-z\s'-]{6,20}$/;
+    if (!nameRegex.test(name)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Name must contain only letters and be 6 to 20 characters long",
+      });
+    }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
