@@ -205,8 +205,7 @@ const TicketDetails = () => {
         priority: newPriority,
       });
       setTicket(res.data.ticket); // Now res is defined properly
-      console.log(
-        "ticket",ticket)
+      console.log("ticket", ticket);
     } catch (error) {
       toast.error("Failed to update priority", error);
     }
@@ -232,17 +231,22 @@ const TicketDetails = () => {
           </button>
           {user?.role === "admin" && (
             <button
-              onClick={() =>
-                deleteTicket(ticket._id).then(() => {
-                  navigate(
-                    user?.role === "engineer"
-                      ? "/dashboard/assigned-tickets"
-                      : user?.role === "admin"
-                      ? "/admin/dashboard"
-                      : "/dashboard/tickets"
-                  );
-                })
-              }
+              onClick={() => {
+                const confirmDelete = window.confirm(
+                  "Are you sure you want to delete this ticket? This action cannot be undone."
+                );
+                if (confirmDelete) {
+                  deleteTicket(ticket._id).then(() => {
+                    navigate(
+                      user?.role === "engineer"
+                        ? "/dashboard/assigned-tickets"
+                        : user?.role === "admin"
+                        ? "/admin/dashboard"
+                        : "/dashboard/tickets"
+                    );
+                  });
+                }
+              }}
               className="inline-flex mb-4 items-center text-lg   text-red-500 hover:text-red-400 cursor-pointer"
             >
               Delete Ticket
@@ -445,11 +449,17 @@ const TicketDetails = () => {
                       ) : user?.role === "admin" ? (
                         <select
                           value={ticket?.priority}
-                          onChange={(e) =>
-                            handlePriorityChange(
-                              e.target.value
-                            )
-                          }
+                          onChange={(e) => {
+                            const confirmDelete =
+                              window.confirm(
+                                "Are you sure you want to chnage the Priority?"
+                              );
+                            if (confirmDelete) {
+                              handlePriorityChange(
+                                e.target.value
+                              );
+                            }
+                          }}
                           className="block border-gray-300 shadow-sm  rounded-lg p-1 text-sm w-2/3 focus:outline-none focus:shadow-md text-gray-600"
                         >
                           <option value="Low">Low</option>
@@ -523,33 +533,39 @@ const TicketDetails = () => {
                             id="assignEngineer"
                             value={ticket?.assignedTo || ""}
                             onChange={async (e) => {
-                              const engineerId =
-                                e.target.value;
-
-                              if (!id) {
-                                console.error(
-                                  "Ticket ID not available"
+                              const confirmDelete =
+                                window.confirm(
+                                  "Are you sure you want to assign the ticket?"
                                 );
-                                return;
-                              }
+                              if (confirmDelete) {
+                                const engineerId =
+                                  e.target.value;
 
-                              try {
-                                await assignedTicket({
-                                  id,
-                                  engineerId,
-                                });
-                                const updated =
-                                  await axios.get(
-                                    `/api/v1/dashboard/tickets/${id}`
+                                if (!id) {
+                                  console.error(
+                                    "Ticket ID not available"
                                   );
-                                setTicket(
-                                  updated.data.ticket
-                                );
-                              } catch (err) {
-                                console.error(
-                                  "Assign Ticket Error:",
-                                  err
-                                );
+                                  return;
+                                }
+
+                                try {
+                                  await assignedTicket({
+                                    id,
+                                    engineerId,
+                                  });
+                                  const updated =
+                                    await axios.get(
+                                      `/api/v1/dashboard/tickets/${id}`
+                                    );
+                                  setTicket(
+                                    updated.data.ticket
+                                  );
+                                } catch (err) {
+                                  console.error(
+                                    "Assign Ticket Error:",
+                                    err
+                                  );
+                                }
                               }
                             }}
                             className="block border-gray-300 shadow-sm  rounded-lg p-2 text-sm w-2/3 focus:outline-none focus:shadow-md text-gray-600"
