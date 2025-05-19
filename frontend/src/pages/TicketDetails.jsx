@@ -205,11 +205,12 @@ const TicketDetails = () => {
         priority: newPriority,
       });
       setTicket(res.data.ticket); // Now res is defined properly
+      console.log(
+        "ticket",ticket)
     } catch (error) {
       toast.error("Failed to update priority", error);
     }
   };
-
   return (
     <DashboardLayout pageTitle={"Ticket Details"}>
       <div className=" bg-gray-50 min-h-screen ">

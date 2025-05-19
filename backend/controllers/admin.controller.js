@@ -170,10 +170,17 @@ export const updateTicketPriority = async (req, res) => {
     ticket.priority = priority;
     await ticket.save();
 
+
+    // 🔥 Populate createdBy and optionally other refs
+    const updatedTicket = await Ticket.findById(ticketId)
+      .populate("createdBy")
+      .populate("assignedTo"); // optional if needed
+
+
     res.status(200).json({
       success: true,
       message: "Ticket priority updated successfully",
-      ticket,
+      ticket:updatedTicket,
     });
   } catch (err) {
     console.error(err);
