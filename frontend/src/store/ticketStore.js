@@ -149,7 +149,7 @@ export const useTicketStore = create((set) => ({
       toast.success("Priority Updated successfully")
       return res;
     } catch (err) {
-      toast.error("Failed to update ticket priority");
+      toast.error("Failed to update ticket priority",err);
       set({ isUpdating: false });
     }
   },
