@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout";
 import { useTicketStore } from "../../store/ticketStore";
 import { useNavigate } from "react-router-dom"; // ✅ Add this at the top
@@ -75,7 +75,7 @@ const CreateTicket = () => {
 
           {/* Category & Priority */}
           <div className="flex gap-4">
-            <div className="w-1/2">
+            <div className="w-full">
               <label className="block text-gray-600 text-sm font-medium mb-1">
                 Category{" "}
                 <span className="text-red-500">*</span>
@@ -98,7 +98,7 @@ const CreateTicket = () => {
               </select>
             </div>
 
-            <div className="w-1/2">
+            {/* <div className="w-1/2">
               <label className="block text-gray-600 text-sm font-medium mb-1">
                 Priority{" "}
                 <span className="text-red-500">*</span>
@@ -115,7 +115,7 @@ const CreateTicket = () => {
                 <option>High</option>
                 <option>Critical</option>
               </select>
-            </div>
+            </div> */}
           </div>
 
           {/* Description */}

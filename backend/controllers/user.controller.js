@@ -142,6 +142,8 @@ export const updateTicketStatus = async (req, res) => {
   }
 };
 
+
+
 // Get a ticket by ID (for user and admin)
 export const getTicketById = async (req, res) => {
   try {

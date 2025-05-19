@@ -125,7 +125,32 @@ export const useTicketStore = create((set) => ({
         isUpdating: false,
       }));
     } catch (err) {
-      console.error("Failed to update ticket:", err);
+      toast.error("Failed to update ticket:", err);
+    }
+  },
+  updateTicketPriority: async (id, updates) => {
+    set({ isUpdating: true });
+    try {
+      const res = await axios.patch(
+        `/api/v1/admin/dashboard/${id}/priority`,
+        updates
+      );
+      const updated = res.data.ticket;
+
+      set((state) => ({
+        tickets: state.tickets.map(
+          (ticket) =>
+            ticket._id === id
+              ? { ...ticket, ...updated }
+              : ticket
+        ),
+        isUpdating: false,
+      }));
+      toast.success("Priority Updated successfully")
+      return res;
+    } catch (err) {
+      toast.error("Failed to update ticket priority");
+      set({ isUpdating: false });
     }
   },
   assignedTicket: async ({ id, engineerId }) => {
