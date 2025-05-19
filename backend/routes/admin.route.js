@@ -9,6 +9,7 @@ import {
   getAllEngineers,
   deleteTicket,
   deleteUser,
+  updateTicketPriority,
 } from "../controllers/admin.controller.js";
 
 const router = express.Router();
@@ -45,7 +46,10 @@ router.patch(
   "/assigned-ticket",
   assignTicketToEngineer
 );
-
+router.patch(
+  "/:ticketId/priority",
+  updateTicketPriority
+);
 router.delete(
   "/delete/:ticketId",
   deleteTicket

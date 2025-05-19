@@ -23,8 +23,12 @@ import { useAuthStore } from "../store/authStore";
 import { toast } from "react-hot-toast";
 const TicketDetails = () => {
   const { user } = useAuthStore();
-  const { addComment, deleteTicket, assignedTicket } =
-    useTicketStore();
+  const {
+    addComment,
+    deleteTicket,
+    assignedTicket,
+    updateTicketPriority,
+  } = useTicketStore();
   const [commentText, setCommentText] = React.useState("");
   const { id } = useParams(); // 🔑 Get ticket ID from URL
   const [ticket, setTicket] = React.useState(null);
@@ -193,6 +197,16 @@ const TicketDetails = () => {
       console.error("Failed to add comment", error);
     } finally {
       setLoading(false);
+    }
+  };
+  const handlePriorityChange = async (newPriority) => {
+    try {
+      const res = await updateTicketPriority(id, {
+        priority: newPriority,
+      });
+      setTicket(res.data.ticket); // Now res is defined properly
+    } catch (error) {
+      toast.error("Failed to update priority", error);
     }
   };
 
@@ -426,9 +440,26 @@ const TicketDetails = () => {
                     </span>
                     <span className="w-2/3">
                       {ticket?.status === "resolved" ? (
-                        <PriorityBadge
-                          priority={"Neutral"}
-                        />
+                        <PriorityBadge priority="Neutral" />
+                      ) : user?.role === "admin" ? (
+                        <select
+                          value={ticket?.priority}
+                          onChange={(e) =>
+                            handlePriorityChange(
+                              e.target.value
+                            )
+                          }
+                          className="block border-gray-300 shadow-sm  rounded-lg p-1 text-sm w-2/3 focus:outline-none focus:shadow-md text-gray-600"
+                        >
+                          <option value="Low">Low</option>
+                          <option value="Medium">
+                            Medium
+                          </option>
+                          <option value="High">High</option>
+                          <option value="Critical">
+                            Critical
+                          </option>
+                        </select>
                       ) : (
                         <PriorityBadge
                           priority={ticket?.priority.toLowerCase()}

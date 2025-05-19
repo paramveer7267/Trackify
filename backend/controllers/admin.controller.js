@@ -28,7 +28,7 @@ export const getAllTickets = async (req, res) => {
 // Get all tickets (Admin only)
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({role: "user"});
+    const users = await User.find({ role: "user" });
     if (!users || users.length === 0) {
       return res.status(404).json({
         success: false,
@@ -52,7 +52,10 @@ export const getTicketsByUser = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    if (
+      !userId ||
+      !mongoose.Types.ObjectId.isValid(userId)
+    ) {
       return res.status(400).json({
         success: false,
         message: "Invalid or missing user ID",
@@ -122,6 +125,54 @@ export const updateTicketStatus = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Ticket status updated successfully",
+      ticket,
+    });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error" });
+  }
+};
+
+export const updateTicketPriority = async (req, res) => {
+  try {
+    const { ticketId } = req.params;
+    let { priority } = req.body;
+
+    priority =
+      priority.charAt(0).toUpperCase() +
+      priority.slice(1).toLowerCase();
+
+    const allowedPriorities = [
+      "Low",
+      "Medium",
+      "High",
+      "Critical",
+    ];
+
+    if (!allowedPriorities.includes(priority)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid priority. Allowed values: Low, Medium, High, Critical.",
+      });
+    }
+
+    const ticket = await Ticket.findById(ticketId);
+    if (!ticket) {
+      return res.status(404).json({
+        success: false,
+        message: "Ticket not found",
+      });
+    }
+
+    ticket.priority = priority;
+    await ticket.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Ticket priority updated successfully",
       ticket,
     });
   } catch (err) {
@@ -285,7 +336,6 @@ export const deleteUser = async (req, res) => {
     });
   }
 };
-
 
 // Check if the user is authenticated (Admin only)
 export async function authCheck(req, res) {
