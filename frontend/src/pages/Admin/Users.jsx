@@ -26,7 +26,7 @@ const Users = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
   useEffect(() => {
     const fetchUsers = async () => {
       setIsLoading(true);
@@ -44,7 +44,10 @@ const Users = () => {
         }
       } catch (error) {
         console.error("Error fetching users:", error);
-        toast.error(error.response?.data?.message || "Failed to fetch users");
+        toast.error(
+          error.response?.data?.message ||
+            "Failed to fetch users"
+        );
       } finally {
         setIsLoading(false);
       }
@@ -113,7 +116,6 @@ const Users = () => {
                     No users found.
                   </td>
                 )}
-                
               </tr>
             )}
 
@@ -135,7 +137,17 @@ const Users = () => {
                     : "-"}
                 </td>
                 <td className="px-4 py-3">
-                  <button onClick={() => deleteUser(user._id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                  <button
+                    onClick={() => {
+                      const confirmDelete = window.confirm(
+                        `Are you sure you want to remove the ${user.role}?`
+                      );
+                      if (confirmDelete) {
+                        deleteUser(user._id);
+                      }
+                    }}
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                  >
                     Remove
                   </button>
                 </td>
