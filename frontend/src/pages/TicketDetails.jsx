@@ -452,7 +452,7 @@ const TicketDetails = () => {
                           onChange={(e) => {
                             const confirmDelete =
                               window.confirm(
-                                "Are you sure you want to chnage the Priority?"
+                                "Are you sure you want to change the Priority?"
                               );
                             if (confirmDelete) {
                               handlePriorityChange(
