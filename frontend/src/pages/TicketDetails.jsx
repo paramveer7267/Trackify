@@ -17,6 +17,7 @@ import {
   User,
   MessageSquare,
   TicketX,
+  Loader,
 } from "lucide-react";
 import { useTicketStore } from "../store/ticketStore";
 import { useAuthStore } from "../store/authStore";
@@ -58,12 +59,14 @@ const TicketDetails = () => {
 
   useEffect(() => {
     const fetchTicket = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(
           `/api/v1/dashboard/tickets/${id}`
         ); // backend endpoint
         setTicket(response.data.ticket);
         setComments(response.data.ticket.comments || []);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching ticket:", error);
       } finally {
@@ -210,6 +213,16 @@ const TicketDetails = () => {
       toast.error("Failed to update priority", error);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="h-screen">
+        <div className="flex justify-center items-center bg-white h-full">
+          <Loader className="animate-spin text-[#1E90FF] size-10" />
+        </div>
+      </div>
+    );
+  }
   return (
     <DashboardLayout pageTitle={"Ticket Details"}>
       <div className=" bg-gray-50 min-h-screen ">
@@ -324,7 +337,7 @@ const TicketDetails = () => {
                     <User className="w-4 h-4 mr-1" />
                     <span>
                       Created by:{" "}
-                      <span className="font-medium">
+                      <span className="font-semibold">
                         {ticket?.createdBy?.name ||
                           "Unknown"}
                       </span>

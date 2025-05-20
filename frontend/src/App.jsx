@@ -16,6 +16,7 @@ import Profile from "./pages/Profile.jsx";
 import "./App.css";
 import Users from "./pages/Admin/Users.jsx";
 import AllTickets from "./pages/Admin/AllTickets.jsx";
+import { Loader } from "lucide-react";
 function App() {
   const { user, isCheckingAuth, authCheck } =
     useAuthStore();
@@ -23,7 +24,15 @@ function App() {
   useEffect(() => {
     authCheck();
   }, []);
-
+  if (isCheckingAuth) {
+    return (
+      <div className="h-screen">
+        <div className="flex justify-center items-center bg-white h-full">
+          <Loader className="animate-spin text-[#1E90FF] size-10" />
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       <Routes>
@@ -110,13 +119,7 @@ function App() {
         />
         <Route
           path="/profile"
-          element={
-            user ? (
-              <Profile />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
+          element={user ? <Profile /> : <Navigate to="/" />}
         />
       </Routes>
       <Toaster />
