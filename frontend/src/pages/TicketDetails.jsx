@@ -182,7 +182,6 @@ const TicketDetails = () => {
   const handleComment = async (e) => {
     e.preventDefault();
     if (!commentText.trim()) return;
-    setLoading(true); // Start loading
     try {
       const newComment = {
         text: commentText,
@@ -198,8 +197,6 @@ const TicketDetails = () => {
       setCommentText("");
     } catch (error) {
       console.error("Failed to add comment", error);
-    } finally {
-      setLoading(false);
     }
   };
   const handlePriorityChange = async (newPriority) => {
