@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import DashboardLayout from "../components/DashboardLayout";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
@@ -38,7 +38,15 @@ const TicketDetails = () => {
   const [comments, setComments] = React.useState([]);
   const navigate = useNavigate();
   const [engineers, setEngineers] = useState([]);
+  const scrollRef = useRef(null);
 
+  useEffect(() => {
+    // Scroll to the end when comments change
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop =
+        scrollRef.current.scrollHeight;
+    }
+  }, [comments]);
   useEffect(() => {
     const fetchEngineers = async () => {
       try {
@@ -357,7 +365,10 @@ const TicketDetails = () => {
               <h3 className="text-lg font-semibold mb-4">
                 Comments & Updates
               </h3>
-              <div className="space-y-4 mb-4 max-h-60 overflow-y-auto pr-2">
+              <div
+                className="space-y-4 mb-4 max-h-60 overflow-y-auto pr-2"
+                ref={scrollRef}
+              >
                 {comments.length === 0 && (
                   <div className="text-gray-500 text-sm">
                     No comments yet. Be the first to
