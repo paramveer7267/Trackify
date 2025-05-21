@@ -18,7 +18,6 @@ import {
   User,
   MessageSquare,
 } from "lucide-react";
-import { useAuthStore } from "../../store/authStore";
 import { useTicketStore } from "../../store/ticketStore";
 
 const AssignedTickets = () => {
@@ -194,12 +193,12 @@ const AssignedTickets = () => {
                           to={`/tickets/${ticket._id}`}
                           className="text-[#5585CE] hover:text-[#5585CE]/90"
                         >
-                          {ticket.title}
+                          {ticket?.title}
                         </Link>
                       </div>
                       <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
                         <span>
-                          From: {ticket?.createdBy.name}
+                          From: {ticket?.createdBy?.name}
                         </span>
                         <span>
                           <PriorityBadge
@@ -257,12 +256,12 @@ const AssignedTickets = () => {
                           to={`/tickets/${ticket._id}`}
                           className="text-[#5585CE] hover:text-[#5585CE]/90"
                         >
-                          {ticket.title}
+                          {ticket?.title}
                         </Link>
                       </div>
                       <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
                         <span>
-                          From: {ticket?.createdBy.name}
+                          From: {ticket?.createdBy?.name}
                         </span>
                         <span>
                           <PriorityBadge
@@ -344,15 +343,15 @@ const AssignedTickets = () => {
                             to={`/tickets/${ticket._id}`}
                             className="text-[#5585CE] hover:text-[#5585CE]/90"
                           >
-                            {ticket.title}
+                            {ticket?.title}
                           </Link>
                         </div>
                         <div className="flex items-center justify-between text-sm text-gray-500">
                           <span>
-                            From: {ticket.createdBy.name}
+                            From: {ticket?.createdBy?.name}
                           </span>
                           <span>
-                            {formatDate(ticket.updatedAt)}
+                            {formatDate(ticket?.updatedAt)}
                           </span>
                         </div>
                       </li>
@@ -445,19 +444,19 @@ const AssignedTickets = () => {
                             to={`/tickets/${ticket._id}`}
                             className="text-[#5585CE] hover:text-[#5585CE]/90 "
                           >
-                            {ticket.title}
+                            {ticket?.title}
                           </Link>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           <StatusBadge
-                            status={ticket.status}
+                            status={ticket?.status}
                           />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {ticket.createdBy.name}
+                          {ticket?.createdBy?.name}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {ticket.category}
+                          {ticket?.category}
                         </td>
                         {ticket?.status === "resolved" ? (
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -474,7 +473,7 @@ const AssignedTickets = () => {
                         )}
 
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {formatDate(ticket.createdAt)}
+                          {formatDate(ticket?.createdAt)}
                         </td>
                       </tr>
                     ))
