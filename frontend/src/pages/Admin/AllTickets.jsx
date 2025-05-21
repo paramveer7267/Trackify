@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import DashboardLayout from "../../components/DashboardLayout";
-import { useTicketStore } from "../../store/ticketStore";
 import { Link } from "react-router-dom";
 import {
   Clock,
@@ -114,7 +113,7 @@ const AllTickets = () => {
     );
   };
   return (
-    <DashboardLayout pageTitle={"My Tickets"}>
+    <DashboardLayout pageTitle={"All Tickets"}>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Tickets</h2>
       </div>

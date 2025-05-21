@@ -6,7 +6,7 @@ import {
   AlertTriangle,
   CheckCircle,
   OctagonX,
-  Activity, 
+  Activity,
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -216,7 +216,7 @@ const TicketDashboard = () => {
               Recent Tickets
             </h2>
           </div>
-          <div className="overflow-hidden">
+          <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
@@ -303,20 +303,20 @@ const TicketDashboard = () => {
                 )}
               </tbody>
             </table>
+          </div>
 
-            <div className="bg-gray-50 px-6 py-3 border-t border-gray-200">
-              <Link
-                to="/admin/all-tickets"
-                className="text-sm font-semibold text-[#0F52BA]/70 hover:text-[#0F52BA]/90"
-              >
-                View all tickets
-              </Link>
-            </div>
+          <div className="bg-gray-50 px-6 py-3 border-t border-gray-200">
+            <Link
+              to="/admin/all-tickets"
+              className="text-sm font-semibold text-[#0F52BA]/70 hover:text-[#0F52BA]/90"
+            >
+              View all tickets
+            </Link>
           </div>
         </div>
 
         {/* Engineers Overview */}
-        <div className="card">
+        <div className="card pb-5 sm:pb-0">
           <div className="p-6 border-b border-gray-200">
             <h2 className="text-lg font-medium text-gray-900">
               Engineers Overview
@@ -362,14 +362,14 @@ const TicketDashboard = () => {
             </ul>
           </div>
 
-          <div className="bg-gray-50 px-6 py-3 border-t border-gray-200">
-            <Link
-              to="/admin/users"
-              className="text-sm font-semibold text-[#0F52BA]/70 hover:text-[#0F52BA]/90"
-            >
+          <Link
+            to="/admin/users"
+            className="text-sm  font-semibold text-[#0F52BA]/70 hover:text-[#0F52BA]/90"
+          >
+            <div className="bg-gray-50 px-6 py-3 border-t border-gray-200">
               Manage engineers
-            </Link>
-          </div>
+            </div>
+          </Link>
         </div>
       </div>
     </div>
