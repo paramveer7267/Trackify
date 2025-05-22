@@ -6,7 +6,8 @@ export default function LoginPage() {
   const [activeTab, setActiveTab] = useState("user");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { userLogin, adminLogin } = useAuthStore();
+  const { userLogin, adminLogin, isLoggingIn } =
+    useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [credentials, setCredentials] = useState(false);
   const handleSubmit = (e) => {
@@ -130,10 +131,11 @@ export default function LoginPage() {
 
           {/* Sign In Button */}
           <button
+            disabled={isLoggingIn}
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
           >
-            Sign In
+            {isLoggingIn ? "Signing" : "Sign In"}
           </button>
           {activeTab === "user" ? (
             <div>
