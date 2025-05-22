@@ -30,8 +30,8 @@ const UserDashboard = () => {
         user?.role?.slice(1)
       } Dashboard`}
     >
-      <div className="flex items-center justify-center pt-30">
-        <Card className=" w-1/2 text-center shadow-xl">
+      <div className="md:flex items-center justify-center pt-30">
+        <Card className=" md:w-1/2 text-center shadow-xl">
           <CardContent className="p-8">
             <h1 className="text-2xl font-bold mb-4">
               Welcome to Your Dashboard
