@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 const Sidebar = ({ isOpen, isMobile, toggleSidebar }) => {
-  const { user, userLogout } = useAuthStore();
+  const { user, userLogout, isLoggingOut } = useAuthStore();
   const currentUser = user;
   const navigate = useNavigate();
 
@@ -171,6 +171,7 @@ const Sidebar = ({ isOpen, isMobile, toggleSidebar }) => {
           </div>
 
           <button
+            disabled={isLoggingOut}
             onClick={handleLogout}
             className="mt-3 w-full font-semibold flex items-center justify-center px-4 py-2 text-sm text-white bg-[#1E5DBE] rounded-md hover:bg-[#1E5DBE]/90 transition-colors"
           >
